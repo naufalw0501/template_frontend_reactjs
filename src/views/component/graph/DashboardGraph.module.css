@@ -1,0 +1,18 @@
+.chartCard {
+  position: relative;
+  width: auto;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+
+  span {
+    height: 10%;
+    font-weight: 600;
+    color: var(--skyblue-800);
+  }
+
+  .chart {
+    height: 95%;
+    max-width: auto;
+    margin: 0vh 1vw;
+  }
+}

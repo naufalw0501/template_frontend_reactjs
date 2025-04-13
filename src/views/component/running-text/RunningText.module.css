@@ -92,7 +92,7 @@
 }
 
 .button-enabled {
-  background-color: var(--skyblue-600);
+  background-color: var(--sky-600);
   /* Tailwind class `bg-sky-600` */
   padding: 0.25rem 1.5rem;
   /* Tailwind classes `px-6 py-1` */

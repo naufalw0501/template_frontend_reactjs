@@ -2,7 +2,7 @@
     position: absolute;
     bottom: 2%;
     width: 100%;
-    background-color: var(--skyblue-100);
+    background-color: var(--sky-100);
     display: flex;
     flex-direction: row;
     justify-content: end;
@@ -10,7 +10,7 @@
     gap: 20px;
     padding-right: 20px;
     font-weight: 500;
-    color: var(--skyblue-950);
+    color: var(--sky-950);
     padding-top: 10px;
     padding-bottom: 10px;
 }
@@ -25,7 +25,7 @@
 }
 
 .pagination-container .arrow:hover{
-    background-color: var(--skyblue-700);
+    background-color: var(--sky-700);
     cursor: pointer;
 }
 
@@ -51,7 +51,7 @@
 }
 
 .search-container {
-    background-color: var(--skyblue-50);
+    background-color: var(--sky-50);
     border-radius: 4px;
     display: flex;
     flex-direction: row;
@@ -62,7 +62,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: var(--skyblue-700);
+    color: var(--sky-700);
 }
 
 .search-input {
@@ -71,11 +71,11 @@
     margin-left: 0.5rem; /* Tailwind class `mx-2` */
     margin-right: 0.5rem;
     outline: none;
-    background-color: var(--skyblue-50);
+    background-color: var(--sky-50);
 }
 
 .search-button {
-    background-color: var(--skyblue-800); 
+    background-color: var(--sky-800); 
     padding: 0.25rem 1.5rem; 
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     font-size: 0.875rem; 
@@ -86,7 +86,7 @@
 
 .search-button:hover {
     transition: background-color 0.2s ease-in-out;
-    background-color: var(--skyblue-900); /* equivalent to hover:bg-sky-900 */
+    background-color: var(--sky-900); /* equivalent to hover:bg-sky-900 */
 }
 
 .popup-container {
@@ -108,7 +108,7 @@
 
 .popup-label {
     font-size: 0.75rem;
-    color: var(--skyblue-600); 
+    color: var(--sky-600); 
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
@@ -129,7 +129,7 @@
 }
 
 .popup-icon-color {
-    color: var(--skyblue-600); 
+    color: var(--sky-600); 
     font-size: 1.125rem; /* Tailwind class `text-lg` */
 }
 
@@ -142,7 +142,7 @@
 }
 
 .button-enabled {
-    background-color: var(--skyblue-600); /* Tailwind class `bg-sky-600` */
+    background-color: var(--sky-600); /* Tailwind class `bg-sky-600` */
     padding: 0.25rem 1.5rem; /* Tailwind classes `px-6 py-1` */
     position: absolute;
     bottom: 0;
@@ -168,7 +168,7 @@
 }
 
 .add-new-button {
-    background-color: var(--skyblue-800); /* equivalent to bg-sky-800 */
+    background-color: var(--sky-800); /* equivalent to bg-sky-800 */
     color: #ffffff; /* equivalent to text-white */
     padding: 0.5rem 1.5rem; /* equivalent to px-6 py-2 */
     font-size: 0.875rem; /* equivalent to text-sm */
@@ -178,7 +178,7 @@
 }
 
 .add-new-button:hover {
-    background-color: var(--skyblue-900); /* equivalent to hover:bg-sky-900 */
+    background-color: var(--sky-900); /* equivalent to hover:bg-sky-900 */
 }
 
 .add-material-button {
@@ -220,7 +220,7 @@
 .save-button {
     color: #ffffff; /* Equivalent to text-white */
     font-size: 0.875rem; /* Equivalent to text-sm */
-    background-color: var(--skyblue-600); /* Equivalent to bg-sky-800 */
+    background-color: var(--sky-600); /* Equivalent to bg-sky-800 */
     padding: 0.375rem 2rem; /* Equivalent to px-8 py-1.5 */
     border-radius: 0.375rem; /* Equivalent to rounded-md */
     border: none;
@@ -229,5 +229,5 @@
 }
 
 .save-button:hover {
-    background-color: var(--skyblue-700);
+    background-color: var(--sky-700);
 }

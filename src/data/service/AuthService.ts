@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 import FetchUtils from "../../utility/FetchUtils"; 
-import { UserEntity } from "../entity/UserEntity";
+import { UserInterface } from "../interface/UserInterface";
 import { BASE_URL, HOME_URL } from "../../Constant";
 
 class AuthService {
@@ -23,7 +23,7 @@ class AuthService {
                 if (body.data.access_token == null) throw Error(body.message);
                 console.log("Login Success");
                 Cookies.set("access_token", body.data.access_token);
-                return new UserEntity({ username: body.data.username, role: body.data.role })
+                return ({ username: body.data.username, role: body.data.role })
             }
         } catch (error) {
             Cookies.remove("access_token");
@@ -41,7 +41,7 @@ class AuthService {
 
             console.log("Token Refreshed");
             Cookies.set("access_token", resp.data.access_token);
-            return new UserEntity({ username: resp.data.username, role: resp.data.role });
+            return ({ username: resp.data.username, role: resp.data.role });
         } catch (error) {
             Cookies.remove("access_token");
             throw error;

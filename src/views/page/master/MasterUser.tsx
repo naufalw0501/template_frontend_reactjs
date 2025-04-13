@@ -1,16 +1,10 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import css from './Master.module.css'
-import { HiDotsVertical } from "react-icons/hi";
-import Popup from "../../component/popup/Popup";
-import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
-import { IoMdSearch } from "react-icons/io";
+import { FaArrowRight, FaArrowLeft, FaRegListAlt, FaHome, FaSortUp, FaSortDown } from "react-icons/fa";
 import AppContext from "../../../Context";
-import { ConfirmationAlertEntity, MiniAlertEntity } from "../../layout/alert/AlertEntity";
-import { UserService } from "../../../data/service/UserService";
-import TablePaginationUtils from "../../../utility/TablePagination";
-import { LiaWindowMaximize } from "react-icons/lia";
-import { PiBarcodeBold } from "react-icons/pi";
-import { AddUserEntity, RoleEntity, UserEntity } from "../../../data/entity/UserEntity";
+import { MiniAlertEntity } from "../../layout/alert/AlertEntity";
+import TableViewUtils from "../../../utility/TableViewUtils";
+import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
 
 
 const MasterUser = () => {
@@ -18,100 +12,53 @@ const MasterUser = () => {
     const context = useContext(AppContext);
     // const contextUserEntity = context.contextUserEntity;
     const setContextLoading = context.setContextLoading;
-    const contextShowConfirmationAlertFunc = context.contextShowConfirmationAlertFunc
     const contextShowMiniAlertFunc = context.contextShowMiniAlertFunc;
-    const [tableListUser, setTableListUser] = useState<UserEntity[] | null>(null)
-    const [ListRoles, setListRoles] = useState<RoleEntity[] | null>(null)
-    const [paginationTableListUser, setPaginationTableListUser] = useState({
-        start: 0,
-        end: 15
-    })
-    const [showTooltip, setShowTooltip] = useState<{ [key: number]: boolean }>({});
-    const [showPopupAddNewUser, setShowPopupAddNewUser] = useState<boolean>(false);
-    const [showPopupEditUser, setShowPopupEditUser] = useState<boolean>(false);
-    const [selectedAddNewUser, setSelectedAddNewUser] = useState<AddUserEntity | null>(null)
-    const [selectedEditUser, setSelectedEditUser] = useState<AddUserEntity | null>(null)
-    const [selectedDefaultEditUser, setSelectedDefaultEditUser] = useState<UserEntity | null>(null)
-    const [filterSearch, setFilterSearch] = useState<string>()
-    const [inputFilterSearch, setInputFilterSearch] = useState<string>()
-    const tooltipRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+    interface dummyDataInterface {
+        id: number;
+        username: string;
+        full_name: string;
+        email: string;
+        role: string;
+        phone: string;
+        address: string;
+        created_at: string;
+        updated_at: string;
+        is_active: boolean;
+    }
+    const [tableData, setTableData] = useState<dummyDataInterface[]>([])
+    const [tableDataCache, setTableDataCache] = useState<dummyDataInterface[]>([])
+    const [sortColumnChoosed, setSortColumnChoosed] = useState<keyof dummyDataInterface | null>(null)
+    const [sortColumnType, setSortColumnType] = useState<"ascending" | "descending">("ascending")
+    const [tableDataFilter, setTableDataFilter] = useState<{ [key: string]: string }>({})
+    const [lengthDataPerPage, setLengthDataPerPage] = useState<number>(10)
+    const [curentPage, setCurrentPage] = useState<number>(1)
+    const [listPage, setListPage] = useState<any[]>([])
     //-----------------------STATE VIEWS-----------------------//
 
-    //------------------------FUNCTIONS------------------------//
-
-
-    const handlePopupAddNew = async () => {
-        setShowPopupAddNewUser(true)
-        setSelectedAddNewUser(null)
-    }
-
-    const handleSaveAddNew = async () => {
-        if (selectedAddNewUser == null) return
-        setContextLoading(true)
-        try {
-            const resp = await UserService.createUser(selectedAddNewUser)
-            await generateData()
-            setShowPopupAddNewUser(false)
-            setSelectedAddNewUser(null)
-            contextShowMiniAlertFunc(new MiniAlertEntity({ messages: resp.message }))
-            setContextLoading(false)
-        } catch (error: any) {
-            setContextLoading(false)
-            contextShowMiniAlertFunc(new MiniAlertEntity({ messages: error.toString(), level: 3 }))
-        }
-    }
-
-    const handlePopupUpdate = async (data: UserEntity) => {
-        setSelectedEditUser(data)
-        setSelectedDefaultEditUser(data)
-        setShowPopupEditUser(true)
-    }
-
-    const handleSaveUpdate = async () => {
-        if (selectedDefaultEditUser == null || selectedEditUser == null) return
-        setContextLoading(true)
-        try {
-            const resp = await UserService.updateUser(
-                selectedDefaultEditUser,
-                { id_role: selectedEditUser.id_role, username: selectedEditUser.username })
-            await generateData()
-            setShowPopupEditUser(false)
-            contextShowMiniAlertFunc(new MiniAlertEntity({ messages: resp.message }))
-            setContextLoading(false)
-        } catch (error: any) {
-            setContextLoading(false)
-            contextShowMiniAlertFunc(new MiniAlertEntity({ messages: error.toString() }))
-        }
-    }
-
-    const handleDelete = async (data: UserEntity) => {
-        if (data == null) return
-        contextShowConfirmationAlertFunc(new ConfirmationAlertEntity({
-            alertQuestion: `Are you sure you want delete ${data.username}?`,
-            onClickYes: async () => {
-                setContextLoading(true)
-                try {
-                    const resp = await UserService.deleteUser(data);
-                    contextShowMiniAlertFunc(new MiniAlertEntity({ messages: resp.message }))
-                    await generateData()
-                    setShowPopupEditUser(false)
-                    setContextLoading(false)
-                } catch (error: any) {
-                    setContextLoading(false)
-                    contextShowMiniAlertFunc(new MiniAlertEntity({ messages: error.toString() }))
-                }
-            },
-        }));
-
-    }
+    //------------------------FUNCTIONS------------------------// 
 
     const generateData = async () => {
         setContextLoading(true)
         try {
-            // const resp = await UserService.getUser();
-            // setTableListUser(resp.data)
-            // const respRoles = await UserService.getRoles();
-            // setListRoles(respRoles.data)
+            const dummy: dummyDataInterface[] = [];
+
+            for (let i = 1; i <= 100; i++) {
+                dummy.push({
+                    id: i,
+                    username: `user${i}`,
+                    full_name: `Nama User ${i}`,
+                    email: `user${i}@example.com`,
+                    role: i % 3 === 0 ? 'Admin' : 'User',
+                    phone: `0812${Math.floor(10000000 + Math.random() * 90000000)}`,
+                    address: `Jl. Contoh Alamat No.${i}`,
+                    created_at: new Date(2023, 0, i).toISOString().slice(0, 10),
+                    updated_at: new Date(2024, 0, i).toISOString().slice(0, 10),
+                    is_active: i % 2 === 0
+                });
+            }
+
+            setTableDataCache(dummy)
+            setTableData(dummy);
             setContextLoading(false)
         } catch (error: any) {
             setContextLoading(false)
@@ -119,50 +66,187 @@ const MasterUser = () => {
         }
     }
 
-    const filtering = (val: UserEntity) => {
-        if (!filterSearch || filterSearch.trim() === "") {
-            return true;
+    const handleSorting = (column: keyof dummyDataInterface | null) => {
+        setSortColumnChoosed(column)
+        if (sortColumnType === "ascending") {
+            setSortColumnType("descending")
+        } else {
+            setSortColumnType("ascending")
         }
-        const searchTerm = filterSearch.toLowerCase();
-        return (
-            val.username?.toLowerCase().includes(searchTerm) ||
-            val.role?.toLowerCase().includes(searchTerm)
-        );
-    };
+    }
 
-    const toggleTooltip = (index: number) => {
-        setShowTooltip({
-            [index]: !showTooltip[index]
-        });
-    };
-
-    const handleOutsideClick = (event: MouseEvent) => {
-        const isOutside = Object.values(tooltipRefs.current).every(
-            (ref) => ref && !ref.contains(event.target as Node)
-        );
-        if (isOutside) {
-            setShowTooltip({});
+    const handleFilter = async () => {
+        setContextLoading(true)
+        try {
+            if (tableDataCache.length > 0) {
+                const resp = tableDataCache
+                let table_filtered = resp.filter((row) =>
+                    TableViewUtils.FilterTable(row, tableDataFilter)
+                )
+                setTableData(table_filtered)
+            }
+        } catch (error: any) {
+            contextShowMiniAlertFunc(new MiniAlertEntity({ messages: error.message, level: 3 }))
+        } finally {
+            setContextLoading(false)
         }
-    };
+    }
+
+    const filterTable = (column: keyof dummyDataInterface, columnnName?: string) => {
+        return <div>
+            <input style={{ fontSize: "12px", marginTop: "0.5dvh", maxWidth: "150px", padding: "0px 3px" }} type="text" value={tableDataFilter[column] ?? ""}
+                placeholder={`${columnnName ?? column} ...`}
+                onChange={(event) => {
+                    setTableDataFilter((prev) => {
+                        const newData = { ...prev }
+                        newData[column] = event.target.value
+                        return newData
+                    })
+                }}
+            />
+        </div>
+    }
+
+    const headerTable = (column: keyof dummyDataInterface, columnName?: string) => {
+        return <>
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", gap: "3px", whiteSpace: "nowrap", cursor: "pointer" }} onClick={() => handleSorting(column)}>
+                <div>{columnName ?? column}</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0", alignItems: "center", justifyItems: "center" }}>
+                    <FaSortUp style={{ color: ((sortColumnChoosed == column && sortColumnType == "descending") ? "var(--gray-800)" : "silver"), margin: 0, padding: 0, height: '18px' }} />
+                    <FaSortDown style={{ color: ((sortColumnChoosed == column && sortColumnType == "ascending") ? "var(--gray-800)" : "silver"), margin: "-18px", padding: 0, height: '18px' }} />
+                </div>
+            </div>
+        </>
+    }
 
     useEffect(() => {
-        document.addEventListener("mousedown", handleOutsideClick);
-        return () => {
-            document.removeEventListener("mousedown", handleOutsideClick);
-        };
-    }, []);
+        let arr_page: number[] = []
+        let arr_page_push: any[] = []
+        let total_page: number = tableData.length % lengthDataPerPage === 0 ? (Math.floor(tableData.length / lengthDataPerPage)) : (Math.floor(tableData.length / lengthDataPerPage)) + 1
+        for (let i = 0; i < total_page; i++) {
+            if (i === 0 || i === total_page - 1 || i === curentPage || i === curentPage - 1 || i === curentPage - 2) {
+                arr_page.push(i + 1)
+            } else {
+            }
+        }
+        for (let i = 0; i < arr_page.length; i++) {
+            arr_page_push.push(arr_page[i])
+            if (arr_page[i + 1] - arr_page[i] !== 1 && i !== arr_page.length - 1) {
+                arr_page_push.push("...")
+            }
+        }
+        setListPage(arr_page_push)
+    }, [curentPage, lengthDataPerPage, tableDataFilter, tableData])
 
     useEffect(() => {
         generateData()
         // eslint-disable-next-line
     }, []);
 
+    useEffect(() => {
+        handleFilter()
+    }, [tableDataFilter])
+
     //------------------------FUNCTIONS------------------------//
 
     return (
-        <div style={{backgroundColor: "var(--gray-200)", height: "100dvh"}}> 
+        <div style={{ backgroundColor: "var(--gray-200)", height: "100dvh", position: "relative", padding: "3dvh 45px", display: "flex", flexDirection: "column" }}>
+            {/* Header */}
+            <div>
+                <div style={{ fontSize: "32px", fontWeight: "500", display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center" }}>
+                    <div><FaRegListAlt style={{ fontSize: "32px", color: "var(--gray-500)" }} /></div>
+                    <div style={{ paddingLeft: "10px" }}>Master User</div>
+                </div>
+                <div style={{ fontSize: "16px", color: "var(--gray-500)", fontWeight: "500", display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center", marginTop: "10px" }}>
+                    <div><FaHome /></div>
+                    <div style={{ paddingLeft: "5px" }}>/ Master</div>
+                    <div style={{ paddingLeft: "5px" }}>/ Users Active</div>
+                </div>
+                <div style={{ backgroundColor: "var(--gray-400)", width: "100%", height: "4px", marginTop: "1dvh" }}></div>
+            </div>
 
+            {/* Table Container (Grow) */}
+            <div style={{ flexGrow: 1, overflow: "hidden", backgroundColor: "white", display: "flex", padding: "10px", borderRadius: "7px", flexDirection: "column", marginTop: "3dvh", boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.1)", }}>
+                <div style={{ flex: 1, overflow: "auto" }}>
+                    <table className="normalTable" style={{ width: "100%", borderCollapse: "collapse" }}>
+                        <thead>
+                            <tr >
+                                <th>No</th>
+                                <th>{headerTable("username", "Username")}{filterTable("username", "Username")}</th>
+                                <th>{headerTable("full_name", "Full Name")}{filterTable("full_name", "Full Name")}</th>
+                                <th>{headerTable("email", "Email")}{filterTable("email", "Email")}</th>
+                                <th>{headerTable("role", "Role")}{filterTable("role", "Role")}</th>
+                                <th>{headerTable("phone", "Phone")}{filterTable("phone", "Phone")}</th>
+                                <th>{headerTable("address", "Address")}{filterTable("address", "Address")}</th>
+                                <th>{headerTable("created_at", "Created At")}{filterTable("created_at", "Created At")}</th>
+                                <th>{headerTable("updated_at", "Updated At")}{filterTable("updated_at", "Updated At")}</th>
+                                <th>{headerTable("is_active", "Active")}{filterTable("is_active", "Active")}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {tableData
+                                .sort((a, b) => {
+                                    if (!sortColumnChoosed) return 0;
+                                    return sortColumnType === "ascending"
+                                        ? TableViewUtils.SortingTable(a, b, sortColumnChoosed)
+                                        : TableViewUtils.SortingTable(b, a, sortColumnChoosed);
+                                })
+                                .slice((curentPage - 1) * lengthDataPerPage, curentPage * lengthDataPerPage)
+                                .map((item, index) => (
+                                    <tr key={item.id}>
+                                        <td>{index + 1 + ((curentPage - 1) * lengthDataPerPage)}</td>
+                                        <td>{item.username}</td>
+                                        <td>{item.full_name}</td>
+                                        <td>{item.email}</td>
+                                        <td>{item.role}</td>
+                                        <td>{item.phone}</td>
+                                        <td>{item.address}</td>
+                                        <td>{item.created_at}</td>
+                                        <td>{item.updated_at}</td>
+                                        <td>{item.is_active ? "Yes" : "No"}</td>
+                                    </tr>
+                                ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* Pagination */}
+            <div style={{ backgroundColor: "white", marginTop: "3dvh", padding: "10px", borderRadius: "7px", boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.1)" }}>
+                <div style={{ flexBasis: "5%", backgroundColor: "white", borderRadius: "5px", boxShadow: '0.5px 0.5px 2px rgba(0, 0, 0, 0.5)', display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: "5px 0px" }} >
+                    <div style={{ marginLeft: "5px" }}>
+                        <select value={lengthDataPerPage} onChange={(event) => { setLengthDataPerPage(parseInt(event.target.value)); setCurrentPage(1) }}>
+                            <option value={10}>10</option>
+                            <option value={50}>50</option>
+                            <option value={100}>100</option>
+                            <option value={500}>500</option>
+                        </select>
+                        &nbsp; of {tableData.length}
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", gap: "5px", marginRight: "10px" }}>
+                        <div className="page-pagination" onClick={() => {
+                            if (curentPage !== 1) {
+                                setCurrentPage(prev => prev - 1);
+                            }
+                        }}><MdKeyboardDoubleArrowLeft size={24} /></div>
+                        {listPage.map((page_number, index) => (
+                            <div key={index} className={page_number === curentPage ? "page-pagination-choosed" : "page-pagination"} onClick={() => {
+                                if (page_number !== "...") setCurrentPage(page_number);
+                            }}>
+                                {page_number}
+                            </div>
+                        ))}
+                        <div className="page-pagination" onClick={() => {
+                            const maxPage = Math.ceil(tableData.length / lengthDataPerPage);
+                            if (curentPage < maxPage) {
+                                setCurrentPage(prev => prev + 1);
+                            }
+                        }}><MdKeyboardDoubleArrowRight size={24} /></div>
+                    </div>
+                </div>
+            </div>
         </div>
+
     )
 }
 

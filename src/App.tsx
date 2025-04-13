@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppContext from "./Context";
 import Cookies from "js-cookie";
 import { ConfirmationAlertEntity, MiniAlertConfirmationEntity, MiniAlertEntity, } from "./views/layout/alert/AlertEntity";
-import { UserEntity } from "./data/entity/UserEntity";
+import { UserInterface } from "./data/interface/UserInterface";
 import MiniAlert from "./views/layout/alert/MiniAlert";
 import { AuthService } from "./data/service/AuthService";
 import Navbar from "./views/layout/navbar/Navbar";
@@ -26,7 +26,7 @@ function App() {
   const [stateShowMiniAlertConfirmation, setStateShowMiniAlertConfirmation] = useState<boolean>(false);
   const [stateShowLoading, setStateShowLoading] = useState<boolean>(false);
   const [confirmationAlertEntity, setConfirmationAlertEntity] = useState<ConfirmationAlertEntity | null>(null);
-  const [contextUserEntity, setContextUserEntity] = useState<UserEntity | null>(null);
+  const [contextUserEntity, setContextUserEntity] = useState<UserInterface | null>(null);
 
   //Context
   const contextAccessToken: string = Cookies.get("token") ?? "";

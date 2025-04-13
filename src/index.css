@@ -291,8 +291,8 @@
 }
 
 * {
-  font-family: 'Poppins', sans-serif;
-} 
+  font-family: 'Montserrat', sans-serif;
+}
 
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
   .backdrop {
@@ -314,27 +314,36 @@
 }
 
 .normalTable thead {
-  background-color: var(--sky-100);
-  color: var(--sky-900);
-
-  tr {
+  color: var(--gray-900);
+  border-radius: 5px;
+  tr { 
+    position: relative;
+    z-index: 5;
     th {
-      padding: 0px 25px 0px 25px;
+      padding: 5px 5px;
+      font-weight: 600;
+      white-space: nowrap;
+      position: sticky;
+      top: 0; 
+      background-color: var(--gray-100);
+      z-index: 1;  
     }
   }
 }
 
-.normalTable tbody tr {
+.normalTable tbody {
   font-weight: 500;
-
-  td {
-    margin: 0px 40px 0px 40px;
+  background-color: white;
+  tr {
+    td { 
+      position: static;
+      border-bottom: 2px solid var(--gray-200);
+      padding: 5px 5px; 
+      white-space: nowrap;
+      color: var(--gray-500);
+    }
   }
-}
-
-.normalTable tbody tr:hover {
-  background-color: var(--sky-50);
-}
+} 
 
 .normalTable .can-hover {
   transition: all 0.5s ease;
@@ -384,6 +393,26 @@
 
 .normalTable .can-hover .tooltip .button-tooltip-delete:hover {
   background-color: var(--rose-300);
+  color: white;
+}
+
+.page-pagination {
+  padding: 0px 2px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.page-pagination-choosed {
+  padding: 0px 2px;
+  border-radius: 2px;
+  cursor: default;
+  transition: all 0.3s ease;
+  background-color: var(--gray-400);
+}
+
+.page-pagination:hover {
+  background-color: var(--gray-600);
   color: white;
 }
 

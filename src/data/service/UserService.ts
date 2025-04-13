@@ -1,9 +1,9 @@
 import FetchUtils from "../../utility/FetchUtils";
 import { BASE_URL } from "../../Constant";
-import { AddUserEntity, RoleEntity, UserEntity } from "../entity/UserEntity";
+import { AddUserInterface, RoleInterface, UserInterface } from "../interface/UserInterface";
 
 class UserService {
-    static async getUser(from_row?: number, limit?: number): Promise<{ message: string, status: number, data: UserEntity[] }> {
+    static async getUser(from_row?: number, limit?: number): Promise<{ message: string, status: number, data: UserInterface[] }> {
         let query = `${BASE_URL}/api/v1/users`
         if (from_row != null && limit != null) {
             query += `?from_row=${from_row}&limit=${limit}`
@@ -12,9 +12,9 @@ class UserService {
 
         if (resp.status != 200) { throw new Error(resp.message) }
 
-        const data: UserEntity[] = []
+        const data: UserInterface[] = []
         for (let i = 0; i < resp.data.length; i++) {
-            data.push(new UserEntity({
+            data.push(({
                 id: resp.data[i].id,
                 role: resp.data[i].role,
                 username: resp.data[i].username,
@@ -23,7 +23,7 @@ class UserService {
         return { ...resp, data };
     }
 
-    static async getRoles(from_row?: number, limit?: number): Promise<{ message: string, status: number, data: RoleEntity[] }> {
+    static async getRoles(from_row?: number, limit?: number): Promise<{ message: string, status: number, data: RoleInterface[] }> {
         let query = `${BASE_URL}/api/v1/users/roles`
         if (from_row != null && limit != null) {
             query += `?from_row=${from_row}&limit=${limit}`
@@ -32,9 +32,9 @@ class UserService {
 
         if (resp.status != 200) { throw new Error(resp.message) }
 
-        const data: RoleEntity[] = []
+        const data: RoleInterface[] = []
         for (let i = 0; i < resp.data.length; i++) {
-            data.push(new RoleEntity({
+            data.push(({
                 id: resp.data[i].id,
                 role: resp.data[i].role,
             }))
@@ -42,7 +42,7 @@ class UserService {
         return { ...resp, data };
     }
 
-    static async createUser(data: AddUserEntity) {
+    static async createUser(data: AddUserInterface) {
         const resp = await FetchUtils.fetchAuth(
             `${BASE_URL}/api/v1/users/add`,
             {
@@ -57,7 +57,7 @@ class UserService {
         return resp;
     }
 
-    static async updateUser(data: UserEntity, update: AddUserEntity) {
+    static async updateUser(data: UserInterface, update: AddUserInterface) {
         const resp = await FetchUtils.fetchAuth(
             `${BASE_URL}/api/v1/users/update`,
             {
@@ -72,7 +72,7 @@ class UserService {
         return resp;
     }
 
-    static async deleteUser(data: UserEntity) {
+    static async deleteUser(data: UserInterface) {
         const resp = await FetchUtils.fetchAuth(
             `${BASE_URL}/api/v1/users/delete`,
             {

@@ -16,7 +16,7 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -79,7 +79,7 @@
 
 .container {
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -92,7 +92,7 @@
   backdrop-filter: blur(10px);
   position: fixed;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
   display: flex;
   text-align: center;
   align-items: center;

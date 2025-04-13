@@ -12,36 +12,7 @@
     transform: translate(-50%, -50%);
     opacity: 1;
     transition: 0.5s;
-    box-shadow: 0 10px 12px rgba(0, 0, 0, 0.2);
-
-    @media (min-width: 769px) {
-        padding: 1.5vw 4vw;
-        max-height: 90%;
-        max-width: 90%;
-        min-width: 50%;
-        min-height: 50%;
-        border-radius: 1vw;
-        margin: 1vh auto;
-    }
-
-    @media (max-width: 768px) and (min-width: 641px) {
-        padding: 1.5vw 4vw;
-        max-height: 90%;
-        max-width: 90%;
-        min-width: 50%;
-        min-height: 50%;
-        border-radius: 1vw;
-        margin: 1vh auto;
-    }
-
-    @media (max-width: 640px) {
-        padding: 1.5vw 4vw;
-        border-radius: 10px;
-        min-width: 80%;
-        min-height: 50%;
-        max-height: 90%;
-        max-width: 85%;
-    }
+    box-shadow: 0 10px 12px rgba(0, 0, 0, 0.2); 
 }
 
 .modalmobile#hide {
@@ -70,17 +41,6 @@
     top: 3%;
     transition: 0.5s;
     color: palevioletred;
-    @media (min-width: 769px) {
-        font-size: 25px;
-    }
-
-    @media (max-width: 768px) and (min-width: 641px) {
-        font-size: 21px;
-    }
-
-    @media (max-width: 640px) {
-        font-size: 18px;
-    }
 }
 
 .modalmobile .closeButton:hover {
@@ -122,4 +82,48 @@
 
 .yesButton:hover {
     background-color: var(--sky-700);
+}
+
+@media only screen and (min-width: 769px) { 
+    .modalmobile {
+        padding: 1.5dvw 4dvw;
+        max-height: 90%;
+        max-width: 90%;
+        min-width: 50%;
+        min-height: 50%;
+        border-radius: 1dvw;
+        margin: 1dvh auto;
+    }
+    .modalmobile .closeButton{ 
+        font-size: 25px;
+    }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 641px) {  
+    .modalmobile { 
+        padding: 1.5dvw 4dvw;
+        max-height: 90%;
+        max-width: 90%;
+        min-width: 50%;
+        min-height: 50%;
+        border-radius: 1dvw;
+        margin: 1dvh auto;
+    }
+    .modalmobile .closeButton{ 
+        font-size: 21px;
+    }
+}
+
+@media only screen and (max-width: 640px) {  
+    .modalmobile { 
+        padding: 1.5dvw 4dvw;
+        border-radius: 10px;
+        min-width: 80%;
+        min-height: 50%;
+        max-height: 90%;
+        max-width: 85%;
+    }
+    .modalmobile .closeButton{ 
+        font-size: 18px;
+    }
 }

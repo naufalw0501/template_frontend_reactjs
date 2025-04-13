@@ -19,13 +19,13 @@ const Home = () => {
 
     const handleClickLogin = async () => {
         try {
-            const result = await AuthService.login(username, password);
-            setContextLoading(true)
-            if (result.username != null) {
-                navigate('/dashboard');
-                setContextUserEntity(result)
-                contextShowMiniAlertFunc(new MiniAlertEntity({ title: "Login Success", messages: `Welcome ${result.username}`, level: 1, duration: 5000 }));
-                setContextLoading(false)}
+            // const result = await AuthService.login(username, password);
+            // setContextLoading(true)
+            // if (result.username != null) {}
+            navigate('/master/user');
+            setContextUserEntity({id: 1, role: "Admin", username: "naufal_wijaya"})
+            contextShowMiniAlertFunc(new MiniAlertEntity({ title: "Login Success", messages: `Welcome naufal_wijaya`, level: 1, duration: 5000 }));
+            setContextLoading(false)
         } catch (error: any) {
             setContextLoading(false)
             contextShowMiniAlertFunc(new MiniAlertEntity({ title: "Error Login", messages: error.toString(), level: 3, duration: 5000 }));

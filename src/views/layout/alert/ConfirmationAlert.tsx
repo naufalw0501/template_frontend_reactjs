@@ -17,10 +17,10 @@ export default function ConfirmationAlert(props: {
                 <h2 style={{ textAlign: "center", margin: "0", }}>
                     CONFIRMATION
                 </h2>
-                <div style={{ textAlign: "center", fontSize: "20px", marginTop: "3vh" }}>
+                <div style={{ textAlign: "center", fontSize: "20px", marginTop: "3dvh" }}>
                     {alertQuestion}
                 </div>
-                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly", height: "100%", marginTop: "3vh" }}>
+                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly", height: "100%", marginTop: "3dvh" }}>
                     <button className={popup.cancelButton} onClick={() => { setShowConfirmationAlert(false)  }}>Cancel</button>
                     <button className={popup.yesButton} onClick={() => { onClickYes(); setShowConfirmationAlert(false) }}>Yes</button>
                 </div>

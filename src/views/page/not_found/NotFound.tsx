@@ -3,7 +3,7 @@ import css from './NotFound.module.css';
 const NotFound = () => {
     return (
         <div className={css.container}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "1vh" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1dvh" }}>
             {/* Bouncing Ball */}
             <div className={css.ball}></div>
 

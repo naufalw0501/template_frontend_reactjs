@@ -12,7 +12,6 @@ import Navbar from "./views/layout/navbar/Navbar";
 import ConfirmationAlert from "./views/layout/alert/ConfirmationAlert";
 import MiniAlertConfirmation from "./views/layout/alert/MiniAlertConfirmation";
 import Loading from "./views/layout/alert/Loading";
-import RunningText from "./views/component/running-text/RunningText"; 
 
 const Home = lazy(() => import("./views/page/home/Home")); 
 const MasterUser = lazy(() => import("./views/page/master/MasterUser")); 
@@ -51,25 +50,25 @@ function App() {
   useEffect(() => {
     console.log("Try refresh...");
     const refresh = async () => {
-      try {
-        const refreshUser = await AuthService.refreshLogin();
-        // console.log(refreshUser)
-        if (refreshUser != null) {
-          setContextUserEntity(refreshUser);
-          contextShowMiniAlertFunc(
-            new MiniAlertEntity({
-              title: "Login Success",
-              messages: `Welcome Back ${refreshUser.username}`,
-              level: 1,
-              duration: 5000,
-            })
-          );
-          console.log("Refresh token success");
-        }
-      } catch (error: any) {
-        // console.log(error)
-        AuthService.logout();
-      }
+      // try {
+      //   const refreshUser = await AuthService.refreshLogin();
+      //   // console.log(refreshUser)
+      //   if (refreshUser != null) {
+      //     setContextUserEntity(refreshUser);
+      //     contextShowMiniAlertFunc(
+      //       new MiniAlertEntity({
+      //         title: "Login Success",
+      //         messages: `Welcome Back ${refreshUser.username}`,
+      //         level: 1,
+      //         duration: 5000,
+      //       })
+      //     );
+      //     console.log("Refresh token success");
+      //   }
+      // } catch (error: any) {
+      //   // console.log(error)
+      //   AuthService.logout();
+      // }
     };
     refresh();
   }, []);
@@ -89,7 +88,6 @@ function App() {
       >
         <BrowserRouter>
           <Navbar showNavbar={showNavbar} setShowNavbar={setShowNavbar} />
-          {contextUserEntity && <RunningText />}
           <Suspense
             fallback={
               <div className="loading-text">

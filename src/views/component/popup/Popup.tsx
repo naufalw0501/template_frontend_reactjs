@@ -23,7 +23,7 @@ export default function Popup(props: {
                 ) : (
                     <></>
                 )}
-                <div style={{marginBottom: "1vh"}}>
+                <div style={{marginBottom: "1dvh"}}>
                     {popupContent}
                 </div>
             </div>

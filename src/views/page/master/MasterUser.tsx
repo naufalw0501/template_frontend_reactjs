@@ -4,7 +4,9 @@ import { FaArrowRight, FaArrowLeft, FaRegListAlt, FaHome, FaSortUp, FaSortDown }
 import AppContext from "../../../Context";
 import { MiniAlertEntity } from "../../layout/alert/AlertEntity";
 import TableViewUtils from "../../../utility/TableViewUtils";
-import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdOutlineMeetingRoom } from "react-icons/md";
+import { IoMdAddCircle } from "react-icons/io";
+import Popup from "../../component/popup/Popup";
 
 
 const MasterUser = () => {
@@ -33,6 +35,7 @@ const MasterUser = () => {
     const [lengthDataPerPage, setLengthDataPerPage] = useState<number>(10)
     const [curentPage, setCurrentPage] = useState<number>(1)
     const [listPage, setListPage] = useState<any[]>([])
+    const [showPopup, setShowPopup] = useState<boolean>(false)
     //-----------------------STATE VIEWS-----------------------//
 
     //------------------------FUNCTIONS------------------------// 
@@ -41,7 +44,6 @@ const MasterUser = () => {
         setContextLoading(true)
         try {
             const dummy: dummyDataInterface[] = [];
-
             for (let i = 1; i <= 100; i++) {
                 dummy.push({
                     id: i,
@@ -94,7 +96,7 @@ const MasterUser = () => {
 
     const filterTable = (column: keyof dummyDataInterface, columnnName?: string) => {
         return <div>
-            <input style={{ fontSize: "12px", marginTop: "0.5dvh", maxWidth: "150px", padding: "0px 3px" }} type="text" value={tableDataFilter[column] ?? ""}
+            <input style={{ fontSize: "12px", marginTop: "0.5dvh", maxWidth: "80px", padding: "0px 3px", borderRadius: "3px" }} type="text" value={tableDataFilter[column] ?? ""}
                 placeholder={`${columnnName ?? column} ...`}
                 onChange={(event) => {
                     setTableDataFilter((prev) => {
@@ -110,7 +112,7 @@ const MasterUser = () => {
     const headerTable = (column: keyof dummyDataInterface, columnName?: string) => {
         return <>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", gap: "3px", whiteSpace: "nowrap", cursor: "pointer" }} onClick={() => handleSorting(column)}>
-                <div>{columnName ?? column}</div>
+                <div style={{ fontSize: "12px" }}>{columnName ?? column}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0", alignItems: "center", justifyItems: "center" }}>
                     <FaSortUp style={{ color: ((sortColumnChoosed == column && sortColumnType == "descending") ? "var(--gray-800)" : "silver"), margin: 0, padding: 0, height: '18px' }} />
                     <FaSortDown style={{ color: ((sortColumnChoosed == column && sortColumnType == "ascending") ? "var(--gray-800)" : "silver"), margin: "-18px", padding: 0, height: '18px' }} />
@@ -150,25 +152,33 @@ const MasterUser = () => {
     //------------------------FUNCTIONS------------------------//
 
     return (
-        <div style={{ backgroundColor: "var(--gray-200)", height: "100dvh", position: "relative", padding: "3dvh 45px", display: "flex", flexDirection: "column" }}>
+        <div className={css["page-container"]}>
             {/* Header */}
-            <div>
-                <div style={{ fontSize: "32px", fontWeight: "500", display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center" }}>
-                    <div><FaRegListAlt style={{ fontSize: "32px", color: "var(--gray-500)" }} /></div>
-                    <div style={{ paddingLeft: "10px" }}>Master User</div>
+            <div className={css["header-container"]}>
+                <div>
+                    <div className={css["title"]}>
+                        <div><FaRegListAlt className={css["icon"]} /></div>
+                        <div className={css["text"]}>Master User</div>
+                    </div>
+                    <div className={css["address"]}>
+                        <div><FaHome /></div>
+                        <div >/ Master</div>
+                        <div >/ Users Active</div>
+                    </div>
                 </div>
-                <div style={{ fontSize: "16px", color: "var(--gray-500)", fontWeight: "500", display: "flex", flexDirection: "row", justifyContent: "start", alignItems: "center", marginTop: "10px" }}>
-                    <div><FaHome /></div>
-                    <div style={{ paddingLeft: "5px" }}>/ Master</div>
-                    <div style={{ paddingLeft: "5px" }}>/ Users Active</div>
+                <div className={css["button-container"]}>
+                    <button onClick={() => setShowPopup(true)} className="sky-button">
+                        <IoMdAddCircle style={{ color: "var(--yellow-300)" }} />
+                        &nbsp; Add New User
+                    </button>
                 </div>
-                <div style={{ backgroundColor: "var(--gray-400)", width: "100%", height: "4px", marginTop: "1dvh" }}></div>
             </div>
+            <div style={{ backgroundColor: "var(--gray-400)", width: "100%", height: "4px", marginTop: "1dvh" }}></div>
 
             {/* Table Container (Grow) */}
-            <div style={{ flexGrow: 1, overflow: "hidden", backgroundColor: "white", display: "flex", padding: "10px", borderRadius: "7px", flexDirection: "column", marginTop: "3dvh", boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.1)", }}>
-                <div style={{ flex: 1, overflow: "auto" }}>
-                    <table className="normalTable" style={{ width: "100%", borderCollapse: "collapse" }}>
+            <div className={css["table-container"]}>
+                <div className={css["sub-container"]}>
+                    <table className="normalTable" >
                         <thead>
                             <tr >
                                 <th>No</th>
@@ -212,10 +222,10 @@ const MasterUser = () => {
             </div>
 
             {/* Pagination */}
-            <div style={{ backgroundColor: "white", marginTop: "3dvh", padding: "10px", borderRadius: "7px", boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.1)" }}>
-                <div style={{ flexBasis: "5%", backgroundColor: "white", borderRadius: "5px", boxShadow: '0.5px 0.5px 2px rgba(0, 0, 0, 0.5)', display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", padding: "5px 0px" }} >
-                    <div style={{ marginLeft: "5px" }}>
-                        <select value={lengthDataPerPage} onChange={(event) => { setLengthDataPerPage(parseInt(event.target.value)); setCurrentPage(1) }}>
+            <div className={css["pagination-container"]} style={{fontSize: "12px"}}>
+                <div className={css["sub-container"]} >
+                    <div style={{ marginLeft: "5px", }}>
+                        <select value={lengthDataPerPage} onChange={(event) => { setLengthDataPerPage(parseInt(event.target.value)); setCurrentPage(1) }} style={{ backgroundColor: "var(--gray-200)" }}>
                             <option value={10}>10</option>
                             <option value={50}>50</option>
                             <option value={100}>100</option>
@@ -228,7 +238,7 @@ const MasterUser = () => {
                             if (curentPage !== 1) {
                                 setCurrentPage(prev => prev - 1);
                             }
-                        }}><MdKeyboardDoubleArrowLeft size={24} /></div>
+                        }}><MdKeyboardDoubleArrowLeft size={18} /></div>
                         {listPage.map((page_number, index) => (
                             <div key={index} className={page_number === curentPage ? "page-pagination-choosed" : "page-pagination"} onClick={() => {
                                 if (page_number !== "...") setCurrentPage(page_number);
@@ -241,10 +251,42 @@ const MasterUser = () => {
                             if (curentPage < maxPage) {
                                 setCurrentPage(prev => prev + 1);
                             }
-                        }}><MdKeyboardDoubleArrowRight size={24} /></div>
+                        }}><MdKeyboardDoubleArrowRight size={18} /></div>
                     </div>
                 </div>
             </div>
+
+            <Popup
+                setShowPopup={setShowPopup}
+                showPopup={showPopup}
+                popupTitle={`Add New User`}
+                popupContent={
+                    <>
+                        <div className={css['popup-container']}>
+                            <label className={css['popup-label']} htmlFor="rfid">RFID</label>
+                            <div className={css['popup-input-container']}>
+                                <span className={css['popup-icon']}><MdOutlineMeetingRoom className={css['popup-icon-color']} /></span>
+                                <input className={css['popup-input']} id="rfid" type="text" placeholder="SCAN RFID HERE"
+                                // value={selectedAddNewActiveLinen?.rfid ?? ""}
+                                // onChange={(event) => {
+                                //     setSelectedAddNewActiveLinen((prevState: (AddActiveLinenEntity | null)) => {
+                                //         return new AddActiveLinenEntity({
+                                //             ...prevState,
+                                //             rfid: event.target.value
+                                //         });
+                                //     });
+                                // }}
+                                />
+                            </div>
+                            <button className={css['button-enabled']}
+                                onClick={() => { }}
+                            >
+                                Save
+                            </button>
+                        </div>
+                    </>
+                }
+            />
         </div>
 
     )

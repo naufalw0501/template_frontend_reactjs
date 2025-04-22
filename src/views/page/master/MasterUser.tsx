@@ -1,74 +1,77 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import css from './Master.module.css'
-import { FaArrowRight, FaArrowLeft, FaRegListAlt, FaHome, FaSortUp, FaSortDown } from "react-icons/fa";
+import { FaRegListAlt, FaHome, FaSortUp, FaSortDown } from "react-icons/fa";
 import AppContext from "../../../Context";
 import { MiniAlertEntity } from "../../layout/alert/AlertEntity";
 import TableViewUtils from "../../../utility/TableViewUtils";
-import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdOutlineMeetingRoom } from "react-icons/md";
+import { MdCardMembership, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdOutlineMeetingRoom, MdRefresh } from "react-icons/md";
 import { IoMdAddCircle } from "react-icons/io";
 import Popup from "../../component/popup/Popup";
+import { FormUserInterface, UserInterface } from "../../../data/interface/UserInterface";
+import { UserService } from "../../../data/service/UserService";
+import Cookies from "js-cookie";
 
 
 const MasterUser = () => {
     //-----------------------STATE VIEWS-----------------------//
     const context = useContext(AppContext);
-    // const contextUserEntity = context.contextUserEntity;
     const setContextLoading = context.setContextLoading;
     const contextShowMiniAlertFunc = context.contextShowMiniAlertFunc;
-    interface dummyDataInterface {
-        id: number;
-        username: string;
-        full_name: string;
-        email: string;
-        role: string;
-        phone: string;
-        address: string;
-        created_at: string;
-        updated_at: string;
-        is_active: boolean;
-    }
-    const [tableData, setTableData] = useState<dummyDataInterface[]>([])
-    const [tableDataCache, setTableDataCache] = useState<dummyDataInterface[]>([])
-    const [sortColumnChoosed, setSortColumnChoosed] = useState<keyof dummyDataInterface | null>(null)
+
+    //State For First Open Page
+    const [tableData, setTableData] = useState<UserInterface[]>([])
+    const [tableDataCache, setTableDataCache] = useState<UserInterface[]>([])
+    const [sortColumnChoosed, setSortColumnChoosed] = useState<keyof UserInterface | null>(null)
     const [sortColumnType, setSortColumnType] = useState<"ascending" | "descending">("ascending")
     const [tableDataFilter, setTableDataFilter] = useState<{ [key: string]: string }>({})
     const [lengthDataPerPage, setLengthDataPerPage] = useState<number>(10)
     const [curentPage, setCurrentPage] = useState<number>(1)
     const [listPage, setListPage] = useState<any[]>([])
+
+    //State For Popup Add and Edit
     const [showPopup, setShowPopup] = useState<boolean>(false)
+    const [formData, setFormData] = useState<FormUserInterface>({})
+    const [selectedData, setSelectedData] = useState<UserInterface | null>(null)
     //-----------------------STATE VIEWS-----------------------//
 
     //------------------------FUNCTIONS------------------------// 
 
-    const generateData = async () => {
+    const handlePopupAddNew = () => {
+        setShowPopup(true)
+        setSelectedData(null)
+        setFormData({})
+    }
+
+    const handleSaveAddNew = async () => {
         setContextLoading(true)
         try {
-            const dummy: dummyDataInterface[] = [];
-            for (let i = 1; i <= 100; i++) {
-                dummy.push({
-                    id: i,
-                    username: `user${i}`,
-                    full_name: `Nama User ${i}`,
-                    email: `user${i}@example.com`,
-                    role: i % 3 === 0 ? 'Admin' : 'User',
-                    phone: `0812${Math.floor(10000000 + Math.random() * 90000000)}`,
-                    address: `Jl. Contoh Alamat No.${i}`,
-                    created_at: new Date(2023, 0, i).toISOString().slice(0, 10),
-                    updated_at: new Date(2024, 0, i).toISOString().slice(0, 10),
-                    is_active: i % 2 === 0
-                });
-            }
-
-            setTableDataCache(dummy)
-            setTableData(dummy);
-            setContextLoading(false)
+            const resp = await UserService.createUser(formData) 
+            await generateData()
+            setShowPopup(false)
+            contextShowMiniAlertFunc(new MiniAlertEntity({ messages: resp.message }))
         } catch (error: any) {
-            setContextLoading(false)
             contextShowMiniAlertFunc(new MiniAlertEntity({ messages: error.toString() }))
+        } finally { 
+            setContextLoading(false)
         }
     }
 
-    const handleSorting = (column: keyof dummyDataInterface | null) => {
+    const generateData = async () => {
+        setContextLoading(true)
+        try {
+            const resp = await UserService.getUser() 
+            let cookies = Cookies.get("token")
+            console.log("token", cookies)
+            setTableDataCache(resp.data)
+            setTableData(resp.data); 
+        } catch (error: any) {
+            contextShowMiniAlertFunc(new MiniAlertEntity({ messages: error.toString() }))
+        } finally {
+            setContextLoading(false)
+        }
+    }
+
+    const handleSorting = (column: keyof UserInterface | null) => {
         setSortColumnChoosed(column)
         if (sortColumnType === "ascending") {
             setSortColumnType("descending")
@@ -94,7 +97,7 @@ const MasterUser = () => {
         }
     }
 
-    const filterTable = (column: keyof dummyDataInterface, columnnName?: string) => {
+    const filterTable = (column: keyof UserInterface, columnnName?: string) => {
         return <div>
             <input style={{ fontSize: "12px", marginTop: "0.5dvh", maxWidth: "80px", padding: "0px 3px", borderRadius: "3px" }} type="text" value={tableDataFilter[column] ?? ""}
                 placeholder={`${columnnName ?? column} ...`}
@@ -109,7 +112,7 @@ const MasterUser = () => {
         </div>
     }
 
-    const headerTable = (column: keyof dummyDataInterface, columnName?: string) => {
+    const headerTable = (column: keyof UserInterface, columnName?: string) => {
         return <>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", gap: "3px", whiteSpace: "nowrap", cursor: "pointer" }} onClick={() => handleSorting(column)}>
                 <div style={{ fontSize: "12px" }}>{columnName ?? column}</div>
@@ -167,9 +170,13 @@ const MasterUser = () => {
                     </div>
                 </div>
                 <div className={css["button-container"]}>
-                    <button onClick={() => setShowPopup(true)} className="sky-button">
+                    <button onClick={() => handlePopupAddNew()} className="sky-button">
                         <IoMdAddCircle style={{ color: "var(--yellow-300)" }} />
                         &nbsp; Add New User
+                    </button>
+                    <button onClick={() => { generateData(); setSortColumnChoosed(null); setSortColumnType('ascending') }} className="sky-button">
+                        <MdRefresh style={{ color: "var(--yellow-300)" }} />
+                        &nbsp; Refresh
                     </button>
                 </div>
             </div>
@@ -183,14 +190,7 @@ const MasterUser = () => {
                             <tr >
                                 <th>No</th>
                                 <th>{headerTable("username", "Username")}{filterTable("username", "Username")}</th>
-                                <th>{headerTable("full_name", "Full Name")}{filterTable("full_name", "Full Name")}</th>
-                                <th>{headerTable("email", "Email")}{filterTable("email", "Email")}</th>
                                 <th>{headerTable("role", "Role")}{filterTable("role", "Role")}</th>
-                                <th>{headerTable("phone", "Phone")}{filterTable("phone", "Phone")}</th>
-                                <th>{headerTable("address", "Address")}{filterTable("address", "Address")}</th>
-                                <th>{headerTable("created_at", "Created At")}{filterTable("created_at", "Created At")}</th>
-                                <th>{headerTable("updated_at", "Updated At")}{filterTable("updated_at", "Updated At")}</th>
-                                <th>{headerTable("is_active", "Active")}{filterTable("is_active", "Active")}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -206,14 +206,7 @@ const MasterUser = () => {
                                     <tr key={item.id}>
                                         <td>{index + 1 + ((curentPage - 1) * lengthDataPerPage)}</td>
                                         <td>{item.username}</td>
-                                        <td>{item.full_name}</td>
-                                        <td>{item.email}</td>
                                         <td>{item.role}</td>
-                                        <td>{item.phone}</td>
-                                        <td>{item.address}</td>
-                                        <td>{item.created_at}</td>
-                                        <td>{item.updated_at}</td>
-                                        <td>{item.is_active ? "Yes" : "No"}</td>
                                     </tr>
                                 ))}
                         </tbody>
@@ -222,7 +215,7 @@ const MasterUser = () => {
             </div>
 
             {/* Pagination */}
-            <div className={css["pagination-container"]} style={{fontSize: "12px"}}>
+            <div className={css["pagination-container"]} style={{ fontSize: "12px" }}>
                 <div className={css["sub-container"]} >
                     <div style={{ marginLeft: "5px", }}>
                         <select value={lengthDataPerPage} onChange={(event) => { setLengthDataPerPage(parseInt(event.target.value)); setCurrentPage(1) }} style={{ backgroundColor: "var(--gray-200)" }}>
@@ -263,23 +256,23 @@ const MasterUser = () => {
                 popupContent={
                     <>
                         <div className={css['popup-container']}>
-                            <label className={css['popup-label']} htmlFor="rfid">RFID</label>
+                            <label className={css['popup-label']} htmlFor="username">Username</label>
                             <div className={css['popup-input-container']}>
-                                <span className={css['popup-icon']}><MdOutlineMeetingRoom className={css['popup-icon-color']} /></span>
-                                <input className={css['popup-input']} id="rfid" type="text" placeholder="SCAN RFID HERE"
-                                // value={selectedAddNewActiveLinen?.rfid ?? ""}
-                                // onChange={(event) => {
-                                //     setSelectedAddNewActiveLinen((prevState: (AddActiveLinenEntity | null)) => {
-                                //         return new AddActiveLinenEntity({
-                                //             ...prevState,
-                                //             rfid: event.target.value
-                                //         });
-                                //     });
-                                // }}
+                                <span className={css['popup-icon']}><MdCardMembership className={css['popup-icon-color']} /></span>
+                                <input className={css['popup-input']} id="username" type="text" placeholder="Fill Username Here..."
+                                value={formData?.username ?? ""}
+                                onChange={(event) => {
+                                    setFormData((prevState: (FormUserInterface | null)) => {
+                                        return ({
+                                            ...prevState,
+                                            username: event.target.value
+                                        });
+                                    });
+                                }}
                                 />
                             </div>
                             <button className={css['button-enabled']}
-                                onClick={() => { }}
+                                onClick={() => { handleSaveAddNew() }}
                             >
                                 Save
                             </button>

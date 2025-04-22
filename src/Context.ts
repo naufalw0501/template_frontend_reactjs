@@ -1,10 +1,10 @@
 import React from 'react';
 import { ConfirmationAlertEntity, MiniAlertConfirmationEntity, MiniAlertEntity } from './views/layout/alert/AlertEntity';
-import { UserInterface } from './data/interface/UserInterface';
+import { UserAuthInterface } from './data/interface/UserInterface';
 const AppContext = React.createContext<{
     contextAccessToken: string,
-    contextUserEntity: UserInterface | null,
-    setContextUserEntity: (val: UserInterface | null) => void,
+    contextUserEntity: UserAuthInterface | null,
+    setContextUserEntity: (val: UserAuthInterface | null) => void,
     setContextLoading: (val: boolean) => void,
     contextShowMiniAlertFunc: (val: MiniAlertEntity) => void,
     contextShowMiniAlertConfirmationFunc: (val: MiniAlertConfirmationEntity) => void,
@@ -12,7 +12,7 @@ const AppContext = React.createContext<{
 }>({
     contextAccessToken: '', 
     contextUserEntity: null,
-    setContextUserEntity: (val: UserInterface | null) => void {},
+    setContextUserEntity: (val: UserAuthInterface | null) => void {},
     setContextLoading: (boolean) => void {},
     contextShowMiniAlertFunc: (val: MiniAlertEntity) => void {},
     contextShowMiniAlertConfirmationFunc: (val: MiniAlertConfirmationEntity) => void {},

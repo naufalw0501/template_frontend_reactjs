@@ -4,7 +4,12 @@ interface UserInterface {
     role?: string; 
 }
 
-interface AddUserInterface {
+interface UserAuthInterface { 
+    username: string;
+    role: string; 
+}
+
+interface FormUserInterface {
     id?: number;
     id_role?: number;
     username?: string;
@@ -16,4 +21,4 @@ interface RoleInterface {
     role: string;
 }
 
-export { UserInterface, AddUserInterface, RoleInterface } 
+export { UserInterface, FormUserInterface, UserAuthInterface, RoleInterface } 

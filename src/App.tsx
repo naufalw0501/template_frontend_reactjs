@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppContext from "./Context";
 import Cookies from "js-cookie";
 import { ConfirmationAlertEntity, MiniAlertConfirmationEntity, MiniAlertEntity, } from "./views/layout/alert/AlertEntity";
-import { UserInterface } from "./data/interface/UserInterface";
+import { UserAuthInterface } from "./data/interface/UserInterface";
 import MiniAlert from "./views/layout/alert/MiniAlert";
 import { AuthService } from "./data/service/AuthService";
 import Navbar from "./views/layout/navbar/Navbar";
@@ -26,7 +26,7 @@ function App() {
   const [stateShowMiniAlertConfirmation, setStateShowMiniAlertConfirmation] = useState<boolean>(false);
   const [stateShowLoading, setStateShowLoading] = useState<boolean>(false);
   const [confirmationAlertEntity, setConfirmationAlertEntity] = useState<ConfirmationAlertEntity | null>(null);
-  const [contextUserEntity, setContextUserEntity] = useState<UserInterface | null>(null);
+  const [contextUserEntity, setContextUserEntity] = useState<UserAuthInterface | null>(null);
 
   //Context
   const contextAccessToken: string = Cookies.get("token") ?? "";
@@ -50,25 +50,26 @@ function App() {
   useEffect(() => {
     console.log("Try refresh...");
     const refresh = async () => {
-      // try {
-      //   const refreshUser = await AuthService.refreshLogin();
-      //   // console.log(refreshUser)
-      //   if (refreshUser != null) {
-      //     setContextUserEntity(refreshUser);
-      //     contextShowMiniAlertFunc(
-      //       new MiniAlertEntity({
-      //         title: "Login Success",
-      //         messages: `Welcome Back ${refreshUser.username}`,
-      //         level: 1,
-      //         duration: 5000,
-      //       })
-      //     );
-      //     console.log("Refresh token success");
-      //   }
-      // } catch (error: any) {
-      //   // console.log(error)
-      //   AuthService.logout();
-      // }
+      try {
+        const refreshUser = await AuthService.refreshLogin();
+        console.log("refreshUser1", refreshUser)
+        if (refreshUser != null) {
+          setContextUserEntity(refreshUser);
+          contextShowMiniAlertFunc(
+            new MiniAlertEntity({
+              title: "Login Success",
+              messages: `Welcome Back ${refreshUser.username}`,
+              level: 1,
+              duration: 5000,
+            })
+          );
+          console.log("Refresh token success");
+        }
+        console.log("refreshUser2", refreshUser)
+      } catch (error: any) {
+        console.log("error", error)
+        // AuthService.logout();
+      }
     };
     refresh();
   }, []);

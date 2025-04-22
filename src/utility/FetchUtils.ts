@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 
 class FetchUtils {
     static async fetchAuth(address: string | URL, option?: RequestInit): Promise<{ message: string, status: number, data: any }> {
-        const token = Cookies.get('access_token');
+        const token = Cookies.get('token');
 
         if (option == null) {
             option = { headers: { Authorization: `Bearer ${token}` } };

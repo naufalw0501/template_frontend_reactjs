@@ -1,13 +1,10 @@
 import FetchUtils from "../../utility/FetchUtils";
 import { BASE_URL } from "../../Constant";
-import { AddUserInterface, RoleInterface, UserInterface } from "../interface/UserInterface";
+import { FormUserInterface, RoleInterface, UserInterface } from "../interface/UserInterface";
 
 class UserService {
-    static async getUser(from_row?: number, limit?: number): Promise<{ message: string, status: number, data: UserInterface[] }> {
-        let query = `${BASE_URL}/api/v1/users`
-        if (from_row != null && limit != null) {
-            query += `?from_row=${from_row}&limit=${limit}`
-        }
+    static async getUser( ): Promise<{ message: string, status: number, data: UserInterface[] }> {
+        let query = `${BASE_URL}/api/users` 
         const resp = await FetchUtils.fetchAuth(query)
 
         if (resp.status != 200) { throw new Error(resp.message) }
@@ -16,7 +13,7 @@ class UserService {
         for (let i = 0; i < resp.data.length; i++) {
             data.push(({
                 id: resp.data[i].id,
-                role: resp.data[i].role,
+                role: "admin",
                 username: resp.data[i].username,
             }))
         }
@@ -42,22 +39,22 @@ class UserService {
         return { ...resp, data };
     }
 
-    static async createUser(data: AddUserInterface) {
+    static async createUser(data: FormUserInterface) {
+        //TODO Add Role
         const resp = await FetchUtils.fetchAuth(
-            `${BASE_URL}/api/v1/users/add`,
+            `${BASE_URL}/api/users/add`,
             {
                 method: 'POST',
                 body: JSON.stringify({
-                    id_role: data.id_role,
                     username: data.username,
                 })
             }
         )
-        if (resp.status != 200) { throw new Error(resp.message) }
+        if (resp.status != 201) { throw new Error(resp.message) }
         return resp;
     }
 
-    static async updateUser(data: UserInterface, update: AddUserInterface) {
+    static async updateUser(data: UserInterface, update: FormUserInterface) {
         const resp = await FetchUtils.fetchAuth(
             `${BASE_URL}/api/v1/users/update`,
             {

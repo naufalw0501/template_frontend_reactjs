@@ -1,15 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import css from './Master.module.css'
-import { FaRegListAlt, FaHome, FaSortUp, FaSortDown } from "react-icons/fa";
+import { FaRegListAlt, FaHome, FaSortUp, FaSortDown, FaSave, FaTrash } from "react-icons/fa";
 import AppContext from "../../../Context";
-import { MiniAlertEntity } from "../../layout/alert/AlertEntity";
+import { ConfirmationAlertEntity, MiniAlertEntity } from "../../layout/alert/AlertEntity";
 import TableViewUtils from "../../../utility/TableViewUtils";
-import { MdCardMembership, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdOutlineMeetingRoom, MdRefresh } from "react-icons/md";
-import { IoMdAddCircle } from "react-icons/io";
+import { MdCardMembership, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdModeEdit } from "react-icons/md";
+
 import Popup from "../../component/popup/Popup";
 import { FormUserInterface, UserInterface } from "../../../data/interface/UserInterface";
 import { UserService } from "../../../data/service/UserService";
-import Cookies from "js-cookie";
 
 
 const MasterUser = () => {
@@ -17,6 +16,7 @@ const MasterUser = () => {
     const context = useContext(AppContext);
     const setContextLoading = context.setContextLoading;
     const contextShowMiniAlertFunc = context.contextShowMiniAlertFunc;
+    const contextShowConfirmationAlertFunc = context.contextShowConfirmationAlertFunc
 
     //State For First Open Page
     const [tableData, setTableData] = useState<UserInterface[]>([])
@@ -24,7 +24,7 @@ const MasterUser = () => {
     const [sortColumnChoosed, setSortColumnChoosed] = useState<keyof UserInterface | null>(null)
     const [sortColumnType, setSortColumnType] = useState<"ascending" | "descending">("ascending")
     const [tableDataFilter, setTableDataFilter] = useState<{ [key: string]: string }>({})
-    const [lengthDataPerPage, setLengthDataPerPage] = useState<number>(10)
+    const [lengthDataPerPage, setLengthDataPerPage] = useState<number>(50)
     const [curentPage, setCurrentPage] = useState<number>(1)
     const [listPage, setListPage] = useState<any[]>([])
 
@@ -42,28 +42,68 @@ const MasterUser = () => {
         setFormData({})
     }
 
+    const handlePopupEdit = (row_data: UserInterface) => {
+        setShowPopup(true)
+        setSelectedData(row_data)
+        setFormData(row_data)
+    }
+
     const handleSaveAddNew = async () => {
         setContextLoading(true)
         try {
-            const resp = await UserService.createUser(formData) 
+            const resp = await UserService.createUser(formData)
             await generateData()
             setShowPopup(false)
             contextShowMiniAlertFunc(new MiniAlertEntity({ messages: resp.message }))
         } catch (error: any) {
             contextShowMiniAlertFunc(new MiniAlertEntity({ messages: error.toString() }))
-        } finally { 
+        } finally {
             setContextLoading(false)
         }
+    }
+
+    const handleSaveEdit = async () => {
+        if (selectedData == null) { return }
+        setContextLoading(true)
+        try {
+            const resp = await UserService.updateUser(selectedData, formData)
+            await generateData()
+            setShowPopup(false)
+            contextShowMiniAlertFunc(new MiniAlertEntity({ messages: resp.message }))
+        } catch (error: any) {
+            contextShowMiniAlertFunc(new MiniAlertEntity({ messages: error.toString() }))
+        } finally {
+            setContextLoading(false)
+        }
+    }
+
+    const handleDelete = async () => {
+        contextShowConfirmationAlertFunc(new ConfirmationAlertEntity({
+            alertQuestion: `Are you sure to delete ${selectedData?.username}?`,
+            onClickYes: async () => {
+                if (selectedData == null) { return }
+                setContextLoading(true)
+                try {
+                    const resp = await UserService.deleteUser(selectedData)
+                    await generateData()
+                    setShowPopup(false)
+                    contextShowMiniAlertFunc(new MiniAlertEntity({ messages: resp.message }))
+                } catch (error: any) {
+                    contextShowMiniAlertFunc(new MiniAlertEntity({ messages: error.toString() }))
+                } finally {
+                    setContextLoading(false)
+                }
+            },
+        }));
+
     }
 
     const generateData = async () => {
         setContextLoading(true)
         try {
-            const resp = await UserService.getUser() 
-            let cookies = Cookies.get("token")
-            console.log("token", cookies)
+            const resp = await UserService.getUser()
             setTableDataCache(resp.data)
-            setTableData(resp.data); 
+            setTableData(resp.data);
         } catch (error: any) {
             contextShowMiniAlertFunc(new MiniAlertEntity({ messages: error.toString() }))
         } finally {
@@ -117,8 +157,8 @@ const MasterUser = () => {
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", gap: "3px", whiteSpace: "nowrap", cursor: "pointer" }} onClick={() => handleSorting(column)}>
                 <div style={{ fontSize: "12px" }}>{columnName ?? column}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0", alignItems: "center", justifyItems: "center" }}>
-                    <FaSortUp style={{ color: ((sortColumnChoosed == column && sortColumnType == "descending") ? "var(--gray-800)" : "silver"), margin: 0, padding: 0, height: '18px' }} />
-                    <FaSortDown style={{ color: ((sortColumnChoosed == column && sortColumnType == "ascending") ? "var(--gray-800)" : "silver"), margin: "-18px", padding: 0, height: '18px' }} />
+                    <FaSortUp style={{ color: ((sortColumnChoosed == column && sortColumnType == "descending") ? "var(--amber-950)" : "var(--amber-100)"), margin: 0, padding: 0, height: '18px' }} />
+                    <FaSortDown style={{ color: ((sortColumnChoosed == column && sortColumnType == "ascending") ? "var(--amber-950)" : "var(--amber-100)"), margin: "-18px", padding: 0, height: '18px' }} />
                 </div>
             </div>
         </>
@@ -170,17 +210,15 @@ const MasterUser = () => {
                     </div>
                 </div>
                 <div className={css["button-container"]}>
-                    <button onClick={() => handlePopupAddNew()} className="sky-button">
-                        <IoMdAddCircle style={{ color: "var(--yellow-300)" }} />
-                        &nbsp; Add New User
+                    <button onClick={() => handlePopupAddNew()} className="amber-button">
+                        Add New
                     </button>
-                    <button onClick={() => { generateData(); setSortColumnChoosed(null); setSortColumnType('ascending') }} className="sky-button">
-                        <MdRefresh style={{ color: "var(--yellow-300)" }} />
-                        &nbsp; Refresh
+                    <button onClick={() => { generateData(); setSortColumnChoosed(null); setSortColumnType('ascending') }} className="amber-button">
+                        Refresh
                     </button>
                 </div>
             </div>
-            <div style={{ backgroundColor: "var(--gray-400)", width: "100%", height: "4px", marginTop: "1dvh" }}></div>
+            <div style={{ backgroundColor: "var(--gray-400)", width: "100%", height: "4px", marginTop: "10px" }}></div>
 
             {/* Table Container (Grow) */}
             <div className={css["table-container"]}>
@@ -191,6 +229,7 @@ const MasterUser = () => {
                                 <th>No</th>
                                 <th>{headerTable("username", "Username")}{filterTable("username", "Username")}</th>
                                 <th>{headerTable("role", "Role")}{filterTable("role", "Role")}</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -207,6 +246,10 @@ const MasterUser = () => {
                                         <td>{index + 1 + ((curentPage - 1) * lengthDataPerPage)}</td>
                                         <td>{item.username}</td>
                                         <td>{item.role}</td>
+                                        <td className="action-button" onClick={() => handlePopupEdit(item)}>
+                                            <span className="icon"><MdModeEdit /></span>
+                                            <span className="label">&nbsp; Edit</span>
+                                        </td>
                                     </tr>
                                 ))}
                         </tbody>
@@ -219,10 +262,10 @@ const MasterUser = () => {
                 <div className={css["sub-container"]} >
                     <div style={{ marginLeft: "5px", }}>
                         <select value={lengthDataPerPage} onChange={(event) => { setLengthDataPerPage(parseInt(event.target.value)); setCurrentPage(1) }} style={{ backgroundColor: "var(--gray-200)" }}>
-                            <option value={10}>10</option>
                             <option value={50}>50</option>
                             <option value={100}>100</option>
                             <option value={500}>500</option>
+                            <option value={1000}>1000</option>
                         </select>
                         &nbsp; of {tableData.length}
                     </div>
@@ -252,32 +295,64 @@ const MasterUser = () => {
             <Popup
                 setShowPopup={setShowPopup}
                 showPopup={showPopup}
-                popupTitle={`Add New User`}
+                popupTitle={selectedData == null ? `Add New User` : `Edit User ${selectedData.username}`}
                 popupContent={
-                    <>
-                        <div className={css['popup-container']}>
-                            <label className={css['popup-label']} htmlFor="username">Username</label>
-                            <div className={css['popup-input-container']}>
-                                <span className={css['popup-icon']}><MdCardMembership className={css['popup-icon-color']} /></span>
-                                <input className={css['popup-input']} id="username" type="text" placeholder="Fill Username Here..."
-                                value={formData?.username ?? ""}
-                                onChange={(event) => {
-                                    setFormData((prevState: (FormUserInterface | null)) => {
-                                        return ({
-                                            ...prevState,
-                                            username: event.target.value
-                                        });
-                                    });
-                                }}
-                                />
+                    selectedData == null ?
+                        <>
+                            <div className={css['popup-container']}>
+                                <label className={css['popup-label']} htmlFor="username"><MdCardMembership />Username</label>
+                                <div className={css['popup-input-container']}>
+                                    <input className={css['popup-input']} id="username" type="text" placeholder="Fill Username Here..."
+                                        value={formData?.username ?? ""}
+                                        onChange={(event) => {
+                                            setFormData((prevState: (FormUserInterface | null)) => {
+                                                return ({
+                                                    ...prevState,
+                                                    username: event.target.value
+                                                });
+                                            });
+                                        }}
+                                    />
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "row", justifyContent: "end", gap: "10px" }}>
+                                    <button className={'amber-button'}
+                                        onClick={() => { handleSaveAddNew() }}
+                                    >
+                                        <FaSave /> &nbsp; Save
+                                    </button>
+                                </div>
                             </div>
-                            <button className={css['button-enabled']}
-                                onClick={() => { handleSaveAddNew() }}
-                            >
-                                Save
-                            </button>
-                        </div>
-                    </>
+                        </> :
+                        <>
+                            <div className={css['popup-container']}>
+                                <label className={css['popup-label']} htmlFor="username"><MdCardMembership />Username</label>
+                                <div className={css['popup-input-container']}>
+                                    <input className={css['popup-input']} id="username" type="text" placeholder="Fill Username Here..."
+                                        value={formData?.username ?? ""}
+                                        onChange={(event) => {
+                                            setFormData((prevState: (FormUserInterface | null)) => {
+                                                return ({
+                                                    ...prevState,
+                                                    username: event.target.value
+                                                });
+                                            });
+                                        }}
+                                    />
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "row", justifyContent: "end", gap: "10px" }}>
+                                    <button className={'rose-button'}
+                                        onClick={() => { handleDelete() }}
+                                    >
+                                        <FaTrash /> &nbsp; Delete
+                                    </button>
+                                    <button className={'amber-button'}
+                                        onClick={() => { handleSaveEdit() }}
+                                    >
+                                        <FaSave /> &nbsp; Save
+                                    </button>
+                                </div>
+                            </div>
+                        </>
                 }
             />
         </div>

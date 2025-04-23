@@ -52,7 +52,6 @@ function App() {
     const refresh = async () => {
       try {
         const refreshUser = await AuthService.refreshLogin();
-        console.log("refreshUser1", refreshUser)
         if (refreshUser != null) {
           setContextUserEntity(refreshUser);
           contextShowMiniAlertFunc(
@@ -65,10 +64,8 @@ function App() {
           );
           console.log("Refresh token success");
         }
-        console.log("refreshUser2", refreshUser)
       } catch (error: any) {
-        console.log("error", error)
-        // AuthService.logout();
+        AuthService.logout();
       }
     };
     refresh();

@@ -311,92 +311,65 @@
 .normalTable {
   min-width: 100%;
   font-size: 12px;
-  width: 100%; 
+  width: 100%;
   border-collapse: collapse
 }
 
 .normalTable thead {
-  color: var(--gray-900);
+  color: var(--amber-50);
   border-radius: 5px;
-  tr { 
+
+  tr {
     position: relative;
     z-index: 1;
+
     th {
       padding: 5px 5px;
       font-weight: 600;
       white-space: nowrap;
       position: sticky;
-      top: 0; 
-      background-color: var(--gray-100);
-      z-index: 1;  
+      top: 0;
+      background-color: var(--amber-800);
+      z-index: 1;
     }
   }
 }
 
 .normalTable tbody {
-  font-weight: 500; 
+  font-weight: 500;
   background-color: white;
+
   tr {
-    td { 
+    td {
       position: static;
       border-bottom: 2px solid var(--gray-200);
-      padding: 5px 5px; 
+      padding: 5px 5px;
       white-space: nowrap;
       font-size: 12px;
       color: var(--gray-500);
     }
   }
-} 
-
-.normalTable .can-hover {
-  transition: all 0.5s ease;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 2px;
-  width: 40%;
-  position: relative;
 }
 
-.normalTable .can-hover:hover {
-  background-color: var(--sky-300);
+.normalTable .action-button {
+  transition: all 0.3s ease;
+  background-color: var(--amber-100);
+  font-weight: 600;
+  border-top: 0px solid var(--amber-200);
+  border-bottom: 2px solid var(--amber-200);
+  color: var(--amber-700); 
+}
+
+.action-button .icon,
+.action-button .label {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.normalTable .action-button:hover {
+  background-color: var(--amber-400);
+  color: var(--amber-50);
   cursor: pointer;
-}
-
-.normalTable .can-hover .tooltip {
-  position: absolute;
-  right: 50px;
-  background-color: white;
-  padding: 5px 0px;
-  border-radius: 3px;
-  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
-  color: var(--sky-600);
-  font-weight: 500;
-  z-index: 2;
-}
-
-@media only screen and (max-width: 600px) {
-  .normalTable .can-hover .tooltip {
-    right: 20px;
-  }
-}
-
-.normalTable .can-hover .tooltip .button-tooltip {
-  padding: 1px 15px;
-}
-
-.normalTable .can-hover .tooltip .button-tooltip:hover {
-  background-color: var(--sky-300);
-  color: white;
-}
-
-.normalTable .can-hover .tooltip .button-tooltip-delete {
-  padding: 1px 15px;
-}
-
-.normalTable .can-hover .tooltip .button-tooltip-delete:hover {
-  background-color: var(--rose-300);
-  color: white;
 }
 
 .page-pagination {
@@ -420,32 +393,37 @@
   color: white;
 }
 
-.sky-button {
-  color: #ffffff; 
-  font-size: 12px; 
-  background-color: var(--sky-600); 
-  padding: 0.375rem 2rem; 
-  border-radius: 0.375rem; 
+.amber-button {
+  color: #ffffff;
+  font-size: 12px;
+  background-color: var(--amber-600);
+  padding: 5px 10px;
+  border-radius: 5px;
   border: none;
   cursor: pointer;
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
   transition: all 0.3s ease;
 }
 
-.sky-button:hover {
-  background-color: var(--sky-700);
+.amber-button:hover {
+  background-color: var(--amber-700);
 }
 
 .rose-button {
-  color: #ffffff; 
-  font-size: 12px; 
-  background-color: var(--rose-600); 
-  padding: 0.375rem 2rem; 
-  border-radius: 0.375rem; 
+  color: #ffffff;
+  font-size: 12px;
+  background-color: var(--rose-600);
+  padding: 5px 10px;
+  border-radius: 5px;
   border: none;
   cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   transition: all 0.3s ease;
 }
 
@@ -454,22 +432,17 @@
 }
 
 .white-button {
-  color: var(--sky-700);
-  /* Equivalent to text-white */
-  font-size: 0.875rem;
-  /* Equivalent to text-sm */
-  background-color: var(--sky-50);
-  /* Equivalent to bg-sky-800 */
-  padding: 0.375rem 2rem;
-  /* Equivalent to px-8 py-1.5 */
-  border-radius: 0.375rem;
-  /* Equivalent to rounded-md */
+  color: var(--amber-700); 
+  font-size: 0.875rem; 
+  background-color: var(--amber-50); 
+  padding: 0.375rem 2rem; 
+  border-radius: 0.375rem; 
   border: none;
   transition: all 0.3s ease;
 }
 
 .white-button:hover {
-  background-color: var(--sky-200);
+  background-color: var(--amber-200);
   cursor: pointer;
 }
 
@@ -514,7 +487,7 @@
 }
 
 input:checked+.slider {
-  background-color: var(--sky-500);
+  background-color: var(--amber-500);
 }
 
 input:focus+.slider {

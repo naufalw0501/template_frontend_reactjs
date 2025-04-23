@@ -10,8 +10,8 @@ import { HiOutlineLogout } from "react-icons/hi";
 import AppContext from '../../../Context';
 import { AuthService } from '../../../data/service/AuthService';
 import { MiniAlertEntity } from '../alert/AlertEntity';
-import { MdKeyboardDoubleArrowLeft } from "react-icons/md";
-import { MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
 
 function Navbar(props: { [key: string]: any }) {
     //--------STATES VIEW--------//
@@ -71,13 +71,13 @@ function Navbar(props: { [key: string]: any }) {
                         onClick={() => setShowNavbar(!showNavbar)}
                     >
                         {!showNavbar
-                            ? <MdKeyboardDoubleArrowRight size={30} /> : <MdKeyboardDoubleArrowLeft size={30} />}
+                            ? <> <GiHamburgerMenu size={20} className='display-icon-mobile' /> <MdKeyboardDoubleArrowLeft size={30} className='display-icon-dekstop' /> </> :  <MdKeyboardDoubleArrowRight size={30}  /> }
                     </button>
                     <div>
                         <NavLink className="logo" to="#" >
                             <img style={{ backgroundColor: "white", padding: "5px 10px" }} width={"100%"} src={require("../../asset/image/logo_new.png")} alt="logo" />
                         </NavLink>
-                        <div style={{ marginTop: "1dvh", color: "var(--sky-50)", fontWeight: "500" }}>
+                        <div style={{ marginTop: "1dvh", color: "var(--amber-50)", fontWeight: "500" }}>
                             {contextUserEntity?.username ?? ""} {`(${contextUserEntity?.role ?? ""})`}
                         </div>
 

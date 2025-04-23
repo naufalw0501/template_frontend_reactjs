@@ -56,12 +56,12 @@ class UserService {
 
     static async updateUser(data: UserInterface, update: FormUserInterface) {
         const resp = await FetchUtils.fetchAuth(
-            `${BASE_URL}/api/v1/users/update`,
+            `${BASE_URL}/api/users/update`,
             {
                 method: 'PUT',
                 body: JSON.stringify({
                     id: data.id,
-                    fields: { ...update }
+                    username: update.username
                 })
             }
         )
@@ -71,7 +71,7 @@ class UserService {
 
     static async deleteUser(data: UserInterface) {
         const resp = await FetchUtils.fetchAuth(
-            `${BASE_URL}/api/v1/users/delete`,
+            `${BASE_URL}/api/users/delete`,
             {
                 method: 'DELETE',
                 body: JSON.stringify({

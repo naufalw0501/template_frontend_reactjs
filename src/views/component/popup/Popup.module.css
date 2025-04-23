@@ -53,8 +53,8 @@
         max-height: 90%;
         max-width: 90%;
         min-width: 50%;
-        min-height: 50%;
-        border-radius: 1dvw;
+        min-height: 20%;
+        border-radius: 15px;
         margin: 1dvh auto;
     }
     .modalmobile .closeButton{ 
@@ -69,7 +69,7 @@
         max-width: 90%;
         min-width: 50%;
         min-height: 50%;
-        border-radius: 1dvw;
+        border-radius: 10px;
         margin: 1dvh auto;
     }
     .modalmobile .closeButton{ 
@@ -80,9 +80,9 @@
 @media only screen and (max-width: 640px) {  
     .modalmobile { 
         padding: 1.5dvw 4dvw;
-        border-radius: 10px;
-        min-width: 80%;
-        min-height: 50%;
+        border-radius: 5px;
+        min-width: 95%;
+        min-height: 30%;
         max-height: 90%;
         max-width: 85%;
     }

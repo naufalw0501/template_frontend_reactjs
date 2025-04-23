@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import FetchUtils from "../../utility/FetchUtils";  
+import FetchUtils from "../../utility/FetchUtils";
 import { BASE_URL, HOME_URL } from "../../Constant";
 
 class AuthService {
@@ -11,7 +11,7 @@ class AuthService {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                credentials: "include", 
+                credentials: "include",
                 body: JSON.stringify({ username, password }),
             });
             const body = await resp.json();
@@ -36,12 +36,11 @@ class AuthService {
         if (Cookies.get("token") == null) return;
         try {
             const resp = await FetchUtils.fetchAuth(
-                `${BASE_URL}/api/auth/refresh`, 
+                `${BASE_URL}/api/auth/refresh`,
                 { method: "POST" });
             if (resp.status !== 200) throw new Error("TOKEN EXPIRED");
             Cookies.set("token", resp.data.token);
             //TODO ROLE
-            console.log(resp)
             return ({ username: resp.data.username, role: "Admin" });
         } catch (error) {
             Cookies.remove("token");

@@ -84,7 +84,7 @@
   justify-content: center;
   align-items: center;
   background-color: white;
-  /* bg-sky-600 */
+  /* bg-amber-600 */
 }
 
 .loading-text {
@@ -101,7 +101,7 @@
 }
 
 .loading-text span {
-  color: var(--sky-700);
+  color: var(--amber-700);
   font-size: 50px;
   display: inline-block;
   animation: bounce 0.3s ease infinite alternate;

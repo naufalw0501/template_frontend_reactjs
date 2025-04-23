@@ -16,7 +16,7 @@ export default function MiniAlertConfirmation(props: {
                     <div className={css.description}>{alertQuestion ?? ""}</div>
                     <div style={{display: "flex", flexDirection: "row", gap: "10px", marginTop: "10px"}}>
                         <div className="rose-button" onClick={() => { setShowMiniAlertConfirmation(false) }}>Cancel</div>
-                        <div className="sky-button" onClick={() => { onClickYes() ; setShowMiniAlertConfirmation(false) }}>Yes</div>
+                        <div className="amber-button" onClick={() => { onClickYes() ; setShowMiniAlertConfirmation(false) }}>Yes</div>
                     </div>
                 </div>
             </div>

@@ -13,18 +13,15 @@ class UserService {
         for (let i = 0; i < resp.data.length; i++) {
             data.push(({
                 id: resp.data[i].id,
-                role: "admin",
+                role_name: resp.data[i].role_name,
                 username: resp.data[i].username,
             }))
         }
         return { ...resp, data };
     }
 
-    static async getRoles(from_row?: number, limit?: number): Promise<{ message: string, status: number, data: RoleInterface[] }> {
-        let query = `${BASE_URL}/api/v1/users/roles`
-        if (from_row != null && limit != null) {
-            query += `?from_row=${from_row}&limit=${limit}`
-        }
+    static async getRoles( ): Promise<{ message: string, status: number, data: RoleInterface[] }> {
+        let query = `${BASE_URL}/api/users/roles` 
         const resp = await FetchUtils.fetchAuth(query)
 
         if (resp.status != 200) { throw new Error(resp.message) }
@@ -33,7 +30,7 @@ class UserService {
         for (let i = 0; i < resp.data.length; i++) {
             data.push(({
                 id: resp.data[i].id,
-                role: resp.data[i].role,
+                role_name: resp.data[i].role_name,
             }))
         }
         return { ...resp, data };
@@ -47,6 +44,7 @@ class UserService {
                 method: 'POST',
                 body: JSON.stringify({
                     username: data.username,
+                    id_role: data.id_role,
                 })
             }
         )
@@ -61,7 +59,8 @@ class UserService {
                 method: 'PUT',
                 body: JSON.stringify({
                     id: data.id,
-                    username: update.username
+                    username: update.username,
+                    id_role: update.id_role
                 })
             }
         )

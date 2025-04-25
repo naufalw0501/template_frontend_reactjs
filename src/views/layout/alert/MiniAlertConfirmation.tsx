@@ -1,6 +1,4 @@
-import css from "./MiniAlertConfirmation.module.css";
-import { IoMdAlert } from "react-icons/io";
-import { IoMdCloseCircleOutline } from "react-icons/io";
+import css from "./MiniAlertConfirmation.module.css"; 
 
 export default function MiniAlertConfirmation(props: {
     alertQuestion?: string;

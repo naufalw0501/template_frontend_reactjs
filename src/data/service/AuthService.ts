@@ -24,7 +24,7 @@ class AuthService {
                 console.log("Login Success");
                 Cookies.set("token", body.token);
                 //TODO Role Fixing
-                return ({ username: body.username, role: "Admin" })
+                return ({ username: body.username, role_name: "Admin" })
             }
         } catch (error) {
             Cookies.remove("token");
@@ -41,7 +41,7 @@ class AuthService {
             if (resp.status !== 200) throw new Error("TOKEN EXPIRED");
             Cookies.set("token", resp.data.token);
             //TODO ROLE
-            return ({ username: resp.data.username, role: "Admin" });
+            return ({ username: resp.data.username, role_name: resp.data.role_name });
         } catch (error) {
             Cookies.remove("token");
             throw error;

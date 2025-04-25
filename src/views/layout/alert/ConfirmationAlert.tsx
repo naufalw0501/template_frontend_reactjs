@@ -11,8 +11,8 @@ export default function ConfirmationAlert(props: {
     const { showConfirmationAlert, setShowConfirmationAlert, alertQuestion, onClickYes } = props;
     return (
         <>
-            {showConfirmationAlert && <Backdrop close={() => {setShowConfirmationAlert(false) }} />}
-            <div className={popup.modalmobile} id={showConfirmationAlert ? undefined : popup.hide}>
+            {showConfirmationAlert && <Backdrop zIndex={21} close={() => {setShowConfirmationAlert(false) }} />}
+            <div className={popup.modalmobile} style={{zIndex: 22}} id={showConfirmationAlert ? undefined : popup.hide}>
                 <div className={popup.closeButton} onClick={() => { setShowConfirmationAlert(false)  }}><IoIosCloseCircle /></div>
                 <h2 style={{ textAlign: "center", margin: "0", }}>
                     CONFIRMATION

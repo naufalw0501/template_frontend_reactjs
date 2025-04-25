@@ -4,10 +4,10 @@ import { FaRegListAlt, FaHome, FaSortUp, FaSortDown, FaSave, FaTrash } from "rea
 import AppContext from "../../../Context";
 import { ConfirmationAlertEntity, MiniAlertEntity } from "../../layout/alert/AlertEntity";
 import TableViewUtils from "../../../utility/TableViewUtils";
-import { MdCardMembership, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdModeEdit } from "react-icons/md";
+import { MdCardMembership, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdModeEdit, MdWork } from "react-icons/md";
 
 import Popup from "../../component/popup/Popup";
-import { FormUserInterface, UserInterface } from "../../../data/interface/UserInterface";
+import { FormUserInterface, RoleInterface, UserInterface } from "../../../data/interface/UserInterface";
 import { UserService } from "../../../data/service/UserService";
 
 
@@ -20,6 +20,7 @@ const MasterUser = () => {
 
     //State For First Open Page
     const [tableData, setTableData] = useState<UserInterface[]>([])
+    const [rolesData, setRolesData] = useState<RoleInterface[]>([])
     const [tableDataCache, setTableDataCache] = useState<UserInterface[]>([])
     const [sortColumnChoosed, setSortColumnChoosed] = useState<keyof UserInterface | null>(null)
     const [sortColumnType, setSortColumnType] = useState<"ascending" | "descending">("ascending")
@@ -101,9 +102,11 @@ const MasterUser = () => {
     const generateData = async () => {
         setContextLoading(true)
         try {
-            const resp = await UserService.getUser()
-            setTableDataCache(resp.data)
-            setTableData(resp.data);
+            const resp_users = await UserService.getUser()
+            setTableDataCache(resp_users.data)
+            setTableData(resp_users.data);
+            const resp_roles = await UserService.getRoles()
+            setRolesData(resp_roles.data);
         } catch (error: any) {
             contextShowMiniAlertFunc(new MiniAlertEntity({ messages: error.toString() }))
         } finally {
@@ -139,7 +142,7 @@ const MasterUser = () => {
 
     const filterTable = (column: keyof UserInterface, columnnName?: string) => {
         return <div>
-            <input style={{ fontSize: "12px", marginTop: "0.5dvh", maxWidth: "80px", padding: "0px 3px", borderRadius: "3px" }} type="text" value={tableDataFilter[column] ?? ""}
+            <input style={{ fontSize: "12px", marginTop: "0.5dvh", minWidth: "100px", width: "100px", maxWidth: "300px", padding: "0px 3px", borderRadius: "3px" }} type="text" value={tableDataFilter[column] ?? ""}
                 placeholder={`${columnnName ?? column} ...`}
                 onChange={(event) => {
                     setTableDataFilter((prev) => {
@@ -190,6 +193,7 @@ const MasterUser = () => {
 
     useEffect(() => {
         handleFilter()
+        // eslint-disable-next-line
     }, [tableDataFilter])
 
     //------------------------FUNCTIONS------------------------//
@@ -228,7 +232,7 @@ const MasterUser = () => {
                             <tr >
                                 <th>No</th>
                                 <th>{headerTable("username", "Username")}{filterTable("username", "Username")}</th>
-                                <th>{headerTable("role", "Role")}{filterTable("role", "Role")}</th>
+                                <th>{headerTable("role_name", "Role")}{filterTable("role_name", "Role")}</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -245,7 +249,7 @@ const MasterUser = () => {
                                     <tr key={item.id}>
                                         <td>{index + 1 + ((curentPage - 1) * lengthDataPerPage)}</td>
                                         <td>{item.username}</td>
-                                        <td>{item.role}</td>
+                                        <td>{item.role_name}</td>
                                         <td className="action-button" onClick={() => handlePopupEdit(item)}>
                                             <span className="icon"><MdModeEdit /></span>
                                             <span className="label">&nbsp; Edit</span>
@@ -297,49 +301,56 @@ const MasterUser = () => {
                 showPopup={showPopup}
                 popupTitle={selectedData == null ? `Add New User` : `Edit User ${selectedData.username}`}
                 popupContent={
-                    selectedData == null ?
-                        <>
-                            <div className={css['popup-container']}>
-                                <label className={css['popup-label']} htmlFor="username"><MdCardMembership />Username</label>
-                                <div className={css['popup-input-container']}>
-                                    <input className={css['popup-input']} id="username" type="text" placeholder="Fill Username Here..."
-                                        value={formData?.username ?? ""}
-                                        onChange={(event) => {
-                                            setFormData((prevState: (FormUserInterface | null)) => {
-                                                return ({
-                                                    ...prevState,
-                                                    username: event.target.value
-                                                });
+                    <>
+                        <div className={css['popup-container']}>
+                            <label className={css['popup-label']} htmlFor="username"><MdCardMembership />Username</label>
+                            <div className={css['popup-input-container']}>
+                                <input className={css['popup-input']} id="username" type="text" placeholder="Fill Username Here..."
+                                    value={formData?.username ?? ""}
+                                    onChange={(event) => {
+                                        setFormData((prevState: (FormUserInterface | null)) => {
+                                            return ({
+                                                ...prevState,
+                                                username: event.target.value
                                             });
-                                        }}
-                                    />
-                                </div>
-                                <div style={{ display: "flex", flexDirection: "row", justifyContent: "end", gap: "10px" }}>
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <label className={css['popup-label']} htmlFor="username"><MdWork />Role Name</label>
+                            <select name="role_name" id="role_name" className={css['popup-input-container']}
+                                value={formData?.role_name || ""}
+                                onChange={(event) => {
+                                    if (event.target.value === "") return
+                                    const selectedRole = rolesData?.find(roles_data => roles_data.role_name === (event.target.value));
+                                    if (selectedRole) {
+                                        setFormData((prevState: FormUserInterface) => {
+                                            return ({
+                                                ...prevState,
+                                                id_role: selectedRole.id,
+                                                role_name: selectedRole.role_name
+                                            });
+                                        });
+                                    }
+                                }}
+                            >
+                                <option value={""}>Choose Role</option>
+                                {rolesData?.map((row_role, idx) => (
+                                    <option value={row_role.role_name} key={idx}>
+                                        {row_role.role_name}
+                                    </option>
+                                ))}
+                            </select>
+                            {selectedData == null ?
+                                <div style={{ display: "flex", flexDirection: "row", justifyContent: "end", gap: "10px", marginTop: "10px" }}>
                                     <button className={'amber-button'}
                                         onClick={() => { handleSaveAddNew() }}
                                     >
                                         <FaSave /> &nbsp; Save
                                     </button>
                                 </div>
-                            </div>
-                        </> :
-                        <>
-                            <div className={css['popup-container']}>
-                                <label className={css['popup-label']} htmlFor="username"><MdCardMembership />Username</label>
-                                <div className={css['popup-input-container']}>
-                                    <input className={css['popup-input']} id="username" type="text" placeholder="Fill Username Here..."
-                                        value={formData?.username ?? ""}
-                                        onChange={(event) => {
-                                            setFormData((prevState: (FormUserInterface | null)) => {
-                                                return ({
-                                                    ...prevState,
-                                                    username: event.target.value
-                                                });
-                                            });
-                                        }}
-                                    />
-                                </div>
-                                <div style={{ display: "flex", flexDirection: "row", justifyContent: "end", gap: "10px" }}>
+                                :
+                                <div style={{ display: "flex", flexDirection: "row", justifyContent: "end", gap: "10px", marginTop: "10px" }}>
                                     <button className={'rose-button'}
                                         onClick={() => { handleDelete() }}
                                     >
@@ -351,8 +362,10 @@ const MasterUser = () => {
                                         <FaSave /> &nbsp; Save
                                     </button>
                                 </div>
-                            </div>
-                        </>
+                            }
+                        </div>
+                    </>
+
                 }
             />
         </div>

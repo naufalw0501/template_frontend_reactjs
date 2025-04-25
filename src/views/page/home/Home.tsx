@@ -23,7 +23,7 @@ const Home = () => {
             const result = await AuthService.login(username, password);
             if (result.username != null) {}
             navigate('/master/user');
-            setContextUserEntity({role: result.role, username: result.username})
+            setContextUserEntity({role_name: result.role_name, username: result.username})
             contextShowMiniAlertFunc(new MiniAlertEntity({ title: "Login Success", messages: `Welcome ${result.username}`, level: 1, duration: 5000 }));
         } catch (error: any) {
             contextShowMiniAlertFunc(new MiniAlertEntity({ title: "Error Login", messages: error.toString(), level: 3, duration: 5000 }));
@@ -38,7 +38,7 @@ const Home = () => {
             {/* Login Form */}
             <div className={css.loginForm}>
                 <div>
-                    <img src={Login} className={css.loginImage} />
+                    <img alt='logo' src={Login} className={css.loginImage} />
                 </div>
                 <h1 className={css.loginTitle}>User Login</h1>
                 <div className={css.loginFields}>

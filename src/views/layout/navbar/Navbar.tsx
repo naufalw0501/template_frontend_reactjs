@@ -48,9 +48,9 @@ function Navbar(props: { [key: string]: any }) {
         setChildOpen(arr);
     }, []);
 
-    // Filter links berdasarkan role
+    // Filter links berdasarkan role_name
     const filteredNavBarLinks = NavBarLinks.filter((link: any) =>
-        link.roles.includes(contextUserEntity?.role)
+        link.roles.includes(contextUserEntity?.role_name)
     );
 
     return (
@@ -78,7 +78,7 @@ function Navbar(props: { [key: string]: any }) {
                             <img style={{ backgroundColor: "white", padding: "5px 10px" }} width={"100%"} src={require("../../asset/image/logo_new.png")} alt="logo" />
                         </NavLink>
                         <div style={{ marginTop: "1dvh", color: "var(--amber-50)", fontWeight: "500" }}>
-                            {contextUserEntity?.username ?? ""} {`(${contextUserEntity?.role ?? ""})`}
+                            {contextUserEntity?.username ?? ""} {`(${contextUserEntity?.role_name ?? ""})`}
                         </div>
 
                         <div className="links nav-top">
@@ -101,7 +101,7 @@ function Navbar(props: { [key: string]: any }) {
                                             </div>
                                             {childOpen[index] === true &&
                                                 val.child
-                                                    .filter((child: any) => child.roles.includes(contextUserEntity?.role))
+                                                    .filter((child: any) => child.roles.includes(contextUserEntity?.role_name))
                                                     .map((val_child: any, index_child: number) => (
                                                         <NavLink
                                                             to={val_child.link}

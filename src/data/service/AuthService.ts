@@ -24,7 +24,7 @@ class AuthService {
                 console.log("Login Success");
                 Cookies.set("token", body.token);
                 //TODO Role Fixing
-                return ({ username: body.username, role_name: "Admin" })
+                return ({ username: body.username, role_name: body.role_name })
             }
         } catch (error) {
             Cookies.remove("token");

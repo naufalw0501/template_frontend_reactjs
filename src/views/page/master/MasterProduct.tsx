@@ -4,14 +4,16 @@ import { FaRegListAlt, FaHome, FaSortUp, FaSortDown, FaSave, FaTrash } from "rea
 import AppContext from "../../../Context";
 import { ConfirmationAlertEntity, MiniAlertEntity } from "../../layout/alert/AlertEntity";
 import TableViewUtils from "../../../utility/TableViewUtils";
-import { MdCardMembership, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdModeEdit, MdWork } from "react-icons/md";
-
+import { MdCardMembership, MdDescription, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdModeEdit, MdNotes, MdShop, MdShoppingBag, MdWork } from "react-icons/md";
+import { format, parse } from "date-fns"
 import Popup from "../../component/popup/Popup";
-import { FormUserInterface, RoleInterface, UserInterface } from "../../../data/interface/UserInterface";
-import { UserService } from "../../../data/service/UserService";
+import { FormProductInterface, CategoryInterface, ProductInterface } from "../../../data/interface/ProductInterface";
+import { ProductService } from "../../../data/service/ProductService";
+import { RiRuler2Fill } from "react-icons/ri";
+import { IoMdPricetag } from "react-icons/io";
+import { SiShopee } from "react-icons/si";
 
-
-const MasterUser = () => {
+const MasterProduct = () => {
     //-----------------------STATE VIEWS-----------------------//
     const context = useContext(AppContext);
     const setContextLoading = context.setContextLoading;
@@ -19,10 +21,10 @@ const MasterUser = () => {
     const contextShowConfirmationAlertFunc = context.contextShowConfirmationAlertFunc
 
     //State For First Open Page
-    const [tableData, setTableData] = useState<UserInterface[]>([])
-    const [rolesData, setRolesData] = useState<RoleInterface[]>([])
-    const [tableDataCache, setTableDataCache] = useState<UserInterface[]>([])
-    const [sortColumnChoosed, setSortColumnChoosed] = useState<keyof UserInterface | null>(null)
+    const [tableData, setTableData] = useState<ProductInterface[]>([])
+    const [categoriesData, setCategoriesData] = useState<CategoryInterface[]>([])
+    const [tableDataCache, setTableDataCache] = useState<ProductInterface[]>([])
+    const [sortColumnChoosed, setSortColumnChoosed] = useState<keyof ProductInterface | null>(null)
     const [sortColumnType, setSortColumnType] = useState<"ascending" | "descending">("ascending")
     const [tableDataFilter, setTableDataFilter] = useState<{ [key: string]: string }>({})
     const [lengthDataPerPage, setLengthDataPerPage] = useState<number>(50)
@@ -31,8 +33,8 @@ const MasterUser = () => {
 
     //State For Popup Add and Edit
     const [showPopup, setShowPopup] = useState<boolean>(false)
-    const [formData, setFormData] = useState<FormUserInterface>({})
-    const [selectedData, setSelectedData] = useState<UserInterface | null>(null)
+    const [formData, setFormData] = useState<FormProductInterface>({})
+    const [selectedData, setSelectedData] = useState<ProductInterface | null>(null)
     //-----------------------STATE VIEWS-----------------------//
 
     //------------------------FUNCTIONS------------------------// 
@@ -43,7 +45,7 @@ const MasterUser = () => {
         setFormData({})
     }
 
-    const handlePopupEdit = (row_data: UserInterface) => {
+    const handlePopupEdit = (row_data: ProductInterface) => {
         setShowPopup(true)
         setSelectedData(row_data)
         setFormData(row_data)
@@ -52,7 +54,7 @@ const MasterUser = () => {
     const handleSaveAddNew = async () => {
         setContextLoading(true)
         try {
-            const resp = await UserService.createUser(formData)
+            const resp = await ProductService.createProduct(formData)
             await generateData()
             setShowPopup(false)
             contextShowMiniAlertFunc(new MiniAlertEntity({ messages: resp.message }))
@@ -67,7 +69,7 @@ const MasterUser = () => {
         if (selectedData == null) { return }
         setContextLoading(true)
         try {
-            const resp = await UserService.updateUser(selectedData, formData)
+            const resp = await ProductService.updateProduct(selectedData, formData)
             await generateData()
             setShowPopup(false)
             contextShowMiniAlertFunc(new MiniAlertEntity({ messages: resp.message }))
@@ -80,12 +82,12 @@ const MasterUser = () => {
 
     const handleDelete = async () => {
         contextShowConfirmationAlertFunc(new ConfirmationAlertEntity({
-            alertQuestion: `Are you sure to delete ${selectedData?.username}?`,
+            alertQuestion: `Are you sure to delete ${selectedData?.product_name}?`,
             onClickYes: async () => {
                 if (selectedData == null) { return }
                 setContextLoading(true)
                 try {
-                    const resp = await UserService.deleteUser(selectedData)
+                    const resp = await ProductService.deleteProduct(selectedData)
                     await generateData()
                     setShowPopup(false)
                     contextShowMiniAlertFunc(new MiniAlertEntity({ messages: resp.message }))
@@ -102,11 +104,11 @@ const MasterUser = () => {
     const generateData = async () => {
         setContextLoading(true)
         try {
-            const resp_users = await UserService.getUser()
-            setTableDataCache(resp_users.data)
-            setTableData(resp_users.data);
-            const resp_roles = await UserService.getRoles()
-            setRolesData(resp_roles.data);
+            const resp_products = await ProductService.getProduct()
+            setTableDataCache(resp_products.data)
+            setTableData(resp_products.data);
+            const resp_categories = await ProductService.getCategories()
+            setCategoriesData(resp_categories.data);
         } catch (error: any) {
             contextShowMiniAlertFunc(new MiniAlertEntity({ messages: error.toString() }))
         } finally {
@@ -114,7 +116,7 @@ const MasterUser = () => {
         }
     }
 
-    const handleSorting = (column: keyof UserInterface | null) => {
+    const handleSorting = (column: keyof ProductInterface | null) => {
         setSortColumnChoosed(column)
         if (sortColumnType === "ascending") {
             setSortColumnType("descending")
@@ -140,9 +142,9 @@ const MasterUser = () => {
         }
     }
 
-    const filterTable = (column: keyof UserInterface, columnnName?: string) => {
+    const filterTable = (column: keyof ProductInterface, columnnName?: string) => {
         return <div>
-            <input style={{ fontSize: "12px", marginTop: "0.5dvh", minWidth: "100px", width: "100px", maxWidth: "300px", padding: "0px 3px", borderRadius: "3px" }} type="text" value={tableDataFilter[column] ?? ""}
+            <input style={{ fontSize: "12px", marginTop: "0.5dvh", width: "100%", padding: "0px 3px", borderRadius: "3px" }} type="text" value={tableDataFilter[column] ?? ""}
                 placeholder={`${columnnName ?? column} ...`}
                 onChange={(event) => {
                     setTableDataFilter((prev) => {
@@ -155,7 +157,7 @@ const MasterUser = () => {
         </div>
     }
 
-    const headerTable = (column: keyof UserInterface, columnName?: string) => {
+    const headerTable = (column: keyof ProductInterface, columnName?: string) => {
         return <>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", gap: "3px", whiteSpace: "nowrap", cursor: "pointer" }} onClick={() => handleSorting(column)}>
                 <div style={{ fontSize: "12px" }}>{columnName ?? column}</div>
@@ -205,12 +207,12 @@ const MasterUser = () => {
                 <div>
                     <div className={css["title"]}>
                         <div><FaRegListAlt className={css["icon"]} /></div>
-                        <div className={css["text"]}>Master User</div>
+                        <div className={css["text"]}>Master Product</div>
                     </div>
                     <div className={css["address"]}>
                         <div><FaHome /></div>
                         <div >/ Master</div>
-                        <div >/ Users Active</div>
+                        <div >/ Products Active</div>
                     </div>
                 </div>
                 <div className={css["button-container"]}>
@@ -231,9 +233,19 @@ const MasterUser = () => {
                         <thead>
                             <tr >
                                 <th>No</th>
-                                <th>{headerTable("username", "Username")}{filterTable("username", "Username")}</th>
-                                <th>{headerTable("role_name", "Role")}{filterTable("role_name", "Role")}</th>
-                                <th>Action</th>
+                                <th>{headerTable("product_name", "Product Name")}{filterTable("product_name", "Product Name")}</th>
+                                <th>{headerTable("description", "Description")}{filterTable("description", "Description")}</th>
+                                <th>{headerTable("category_name", "Category Name")}{filterTable("category_name", "Category Name")}</th>
+                                <th>{headerTable("lowest_price", "Lowest Price")}{filterTable("lowest_price", "Lowest Price")}</th>
+                                <th>{headerTable("highest_price", "Highest Price")}{filterTable("highest_price", "Highest Price")}</th>
+                                <th>{headerTable("size", "Size")}{filterTable("size", "Size")}</th>
+                                <th>{headerTable("notes", "Notes")}{filterTable("notes", "Notes")}</th>
+                                <th>{headerTable("link_shopee", "Link Shopee")}{filterTable("link_shopee", "Link Shopee")}</th>
+                                <th>{headerTable("link_tokopedia", "Link Tokopedia")}{filterTable("link_tokopedia", "Link Tokopedia")}</th>
+                                <th>{headerTable("image_file", "Image File")}{filterTable("image_file", "Image File")}</th>
+                                <th>{headerTable("updated_at", "Updated At")}{filterTable("updated_at", "Updated At")}</th>
+                                <th>{headerTable("created_at", "Created At")}{filterTable("created_at", "Created At")}</th>
+                                <th style={{ backgroundColor: "var(--amber-900)", width: "100px", maxWidth: "100px", minWidth: "100px", position: "sticky", right: 0, zIndex: 1 }}>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -248,9 +260,19 @@ const MasterUser = () => {
                                 .map((item, index) => (
                                     <tr key={item.id}>
                                         <td>{index + 1 + ((curentPage - 1) * lengthDataPerPage)}</td>
-                                        <td>{item.username}</td>
-                                        <td>{item.role_name}</td>
-                                        <td className="action-button" onClick={() => handlePopupEdit(item)}>
+                                        <td>{item.product_name}</td>
+                                        <td>{item.description}</td>
+                                        <td>{item.category_name}</td>
+                                        <td>{item.lowest_price}</td>
+                                        <td>{item.highest_price}</td>
+                                        <td>{item.size}</td>
+                                        <td>{item.notes}</td>
+                                        <td>{item.link_shopee}</td>
+                                        <td>{item.link_tokopedia}</td>
+                                        <td>{item.image_file}</td>
+                                        <td>{format(item.created_at, "yyyy-MM-dd HH:mm:ss")}</td>
+                                        <td>{format(item.updated_at, "yyyy-MM-dd HH:mm:ss")}</td>
+                                        <td className="action-button" onClick={() => handlePopupEdit(item)} style={{ width: "100px", maxWidth: "100px", minWidth: "100px", position: "sticky", right: 0, zIndex: 1 }}>
                                             <span className="icon"><MdModeEdit /></span>
                                             <span className="label">&nbsp; Edit</span>
                                         </td>
@@ -299,45 +321,143 @@ const MasterUser = () => {
             <Popup
                 setShowPopup={setShowPopup}
                 showPopup={showPopup}
-                popupTitle={selectedData == null ? `Add New User` : `Edit User ${selectedData.username}`}
+                popupTitle={selectedData == null ? `Add New Product` : `Edit Product ${selectedData.product_name}`}
                 popupContent={
                     <>
                         <div className={css['popup-container']}>
-                            <label className={css['popup-label']} htmlFor="username"><MdCardMembership />Username</label>
+                            <label className={css['popup-label']} htmlFor="product_name"><MdCardMembership />Product Name</label>
                             <div className={css['popup-input-container']}>
-                                <input className={css['popup-input']} id="username" type="text" placeholder="Fill Username Here..."
-                                    value={formData?.username ?? ""}
+                                <input className={css['popup-input']} id="product_name" type="text" placeholder="Fill Product Name Here..."
+                                    value={formData?.product_name ?? ""}
                                     onChange={(event) => {
-                                        setFormData((prevState: (FormUserInterface | null)) => {
+                                        setFormData((prevState: (FormProductInterface | null)) => {
                                             return ({
                                                 ...prevState,
-                                                username: event.target.value
+                                                product_name: event.target.value
                                             });
                                         });
                                     }}
                                 />
                             </div>
-                            <label className={css['popup-label']} htmlFor="role_name"><MdWork />Role Name</label>
-                            <select name="role_name" id="role_name" className={css['popup-input-container']}
-                                value={formData?.role_name || ""}
-                                onChange={(event) => {
-                                    if (event.target.value === "") return
-                                    const selectedRole = rolesData?.find(roles_data => roles_data.role_name === (event.target.value));
-                                    if (selectedRole) {
-                                        setFormData((prevState: FormUserInterface) => {
+                            <label className={css['popup-label']} htmlFor="description"><MdDescription />Description</label>
+                            <div className={css['popup-input-container']}>
+                                <input className={css['popup-input']} id="description" type="text" placeholder="Fill Description Here..."
+                                    value={formData?.description ?? ""}
+                                    onChange={(event) => {
+                                        setFormData((prevState: (FormProductInterface | null)) => {
                                             return ({
                                                 ...prevState,
-                                                id_role: selectedRole.id,
-                                                role_name: selectedRole.role_name
+                                                description: event.target.value
+                                            });
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <label className={css['popup-label']} htmlFor="lowest_price"><IoMdPricetag />Lowest Price</label>
+                            <div className={css['popup-input-container']}>
+                                <input className={css['popup-input']} id="lowest_price" type="text" placeholder="Fill Lowest Price Here..."
+                                    value={formData?.lowest_price ?? ""}
+                                    onChange={(event) => {
+                                        setFormData((prevState: (FormProductInterface | null)) => {
+                                            return ({
+                                                ...prevState,
+                                                lowest_price: parseInt(event.target.value)
+                                            });
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <label className={css['popup-label']} htmlFor="highest_price"><IoMdPricetag />Highest Price</label>
+                            <div className={css['popup-input-container']}>
+                                <input className={css['popup-input']} id="highest_price" type="text" placeholder="Fill Highest Price Here..."
+                                    value={formData?.highest_price ?? ""}
+                                    onChange={(event) => {
+                                        setFormData((prevState: (FormProductInterface | null)) => {
+                                            return ({
+                                                ...prevState,
+                                                highest_price: parseInt(event.target.value)
+                                            });
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <label className={css['popup-label']} htmlFor="size"><RiRuler2Fill />Size</label>
+                            <div className={css['popup-input-container']}>
+                                <input className={css['popup-input']} id="size" type="text" placeholder="Fill Size Here..."
+                                    value={formData?.size ?? ""}
+                                    onChange={(event) => {
+                                        setFormData((prevState: (FormProductInterface | null)) => {
+                                            return ({
+                                                ...prevState,
+                                                size: event.target.value
+                                            });
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <label className={css['popup-label']} htmlFor="notes"><MdNotes />Notes</label>
+                            <div className={css['popup-input-container']}>
+                                <input className={css['popup-input']} id="notes" type="text" placeholder="Fill Notes Here..."
+                                    value={formData?.notes ?? ""}
+                                    onChange={(event) => {
+                                        setFormData((prevState: (FormProductInterface | null)) => {
+                                            return ({
+                                                ...prevState,
+                                                notes: event.target.value
+                                            });
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <label className={css['popup-label']} htmlFor="link_shopee"><SiShopee />Link Shopee</label>
+                            <div className={css['popup-input-container']}>
+                                <input className={css['popup-input']} id="link_shopee" type="text" placeholder="Fill Link Shopee Here..."
+                                    value={formData?.link_shopee ?? ""}
+                                    onChange={(event) => {
+                                        setFormData((prevState: (FormProductInterface | null)) => {
+                                            return ({
+                                                ...prevState,
+                                                link_shopee: event.target.value
+                                            });
+                                        });
+                                    }}
+                                />
+                            </div>
+                            <label className={css['popup-label']} htmlFor="link_tokopedia"><MdShoppingBag />Link Tokopedia</label>
+                            <div className={css['popup-input-container']}>
+                                <input className={css['popup-input']} id="link_tokopedia" type="text" placeholder="Fill Link Tokopedia Here..."
+                                    value={formData?.link_tokopedia ?? ""}
+                                    onChange={(event) => {
+                                        setFormData((prevState: (FormProductInterface | null)) => {
+                                            return ({
+                                                ...prevState,
+                                                link_tokopedia: event.target.value
+                                            });
+                                        });
+                                    }}
+                                />
+                            </div>  
+                            <label className={css['popup-label']} htmlFor="category_name"><MdWork />Category Name</label>
+                            <select name="category_name" id="category_name" className={css['popup-input-container']}
+                                value={formData?.category_name || ""}
+                                onChange={(event) => {
+                                    if (event.target.value === "") return
+                                    const selectedCategory = categoriesData?.find(categories_data => categories_data.category_name === (event.target.value));
+                                    if (selectedCategory) {
+                                        setFormData((prevState: FormProductInterface) => {
+                                            return ({
+                                                ...prevState,
+                                                id_category: selectedCategory.id,
+                                                category_name: selectedCategory.category_name
                                             });
                                         });
                                     }
                                 }}
                             >
-                                <option value={""}>Choose Role</option>
-                                {rolesData?.map((row_role, idx) => (
-                                    <option value={row_role.role_name} key={idx}>
-                                        {row_role.role_name}
+                                <option value={""}>Choose Category</option>
+                                {categoriesData?.map((row_category, idx) => (
+                                    <option value={row_category.category_name} key={idx}>
+                                        {row_category.category_name}
                                     </option>
                                 ))}
                             </select>
@@ -373,4 +493,4 @@ const MasterUser = () => {
     )
 }
 
-export default MasterUser
+export default MasterProduct

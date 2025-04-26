@@ -15,6 +15,7 @@ import Loading from "./views/layout/alert/Loading";
 
 const Home = lazy(() => import("./views/page/home/Home")); 
 const MasterUser = lazy(() => import("./views/page/master/MasterUser")); 
+const MasterProduct = lazy(() => import("./views/page/master/MasterProduct")); 
 const NotFound = lazy(() => import("./views/page/not_found/NotFound"));
 
 function App() {
@@ -105,6 +106,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} /> 
               <Route path="/master/user" element={<MasterUser />} /> 
+              <Route path="/master/product" element={<MasterProduct />} /> 
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>

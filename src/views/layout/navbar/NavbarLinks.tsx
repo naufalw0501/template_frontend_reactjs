@@ -14,6 +14,12 @@ const NavBarLinks : any = [
                 icon : <GoDotFill />,
                 roles : ["Admin"],
             }, 
+            {
+                title : "Product",
+                link : "/master/product",
+                icon : <GoDotFill />,
+                roles : ["Admin"],
+            }, 
         ]
     },
 ]

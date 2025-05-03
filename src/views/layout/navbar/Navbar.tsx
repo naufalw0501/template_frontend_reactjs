@@ -77,7 +77,7 @@ function Navbar(props: { [key: string]: any }) {
                         <NavLink className="logo" to="#" >
                             <img style={{ backgroundColor: "white", padding: "5px 10px" }} width={"100%"} src={require("../../asset/image/logo_new.png")} alt="logo" />
                         </NavLink>
-                        <div style={{ marginTop: "1dvh", color: "var(--amber-50)", fontWeight: "500" }}>
+                        <div style={{ marginTop: "1dvh", color: "var(--primary-50)", fontWeight: "500" }}>
                             {contextUserEntity?.username ?? ""} {`(${contextUserEntity?.role_name ?? ""})`}
                         </div>
 

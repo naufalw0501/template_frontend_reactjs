@@ -15,18 +15,21 @@ export default function Popup(props: {
         <>
             {showPopup && <Backdrop close={() => setShowPopup(false)} />}
             <div className={popup.modalmobile} id={showPopup ? undefined : popup.hide}>
-                <div className={popup.closeButton} onClick={() => { setShowPopup(false) }}><IoIosCloseCircle /></div>
-                {popupTitle != null ? (
-                    <h2 style={{textAlign: "center", margin: "0"}}>
-                        {popupTitle.toUpperCase().replace("_", " ")}
-                    </h2>
-                ) : (
-                    <></>
-                )}
-                <div style={{marginBottom: "1dvh"}}>
+                <div className={popup.header}>
+                    <div className={popup.closeButton} onClick={() => { setShowPopup(false) }}>
+                        <IoIosCloseCircle />
+                    </div>
+                    {popupTitle != null ? (
+                        <h2 style={{ textAlign: "center", margin: "0" }}>
+                            {popupTitle.toUpperCase().replace("_", " ")}
+                        </h2>
+                    ) : null}
+                </div>
+                <div className={popup.content}>
                     {popupContent}
                 </div>
             </div>
+
         </>
     );
 }

@@ -4,8 +4,8 @@ import { FaRegListAlt, FaHome, FaSortUp, FaSortDown, FaSave, FaTrash } from "rea
 import AppContext from "../../../Context";
 import { ConfirmationAlertEntity, MiniAlertEntity } from "../../layout/alert/AlertEntity";
 import TableViewUtils from "../../../utility/TableViewUtils";
-import { MdCardMembership, MdDescription, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdModeEdit, MdNotes, MdShop, MdShoppingBag, MdWork } from "react-icons/md";
-import { format, parse } from "date-fns"
+import { MdCardMembership, MdDescription, MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight, MdModeEdit, MdNotes, MdShoppingBag, MdWork } from "react-icons/md";
+import { format } from "date-fns"
 import Popup from "../../component/popup/Popup";
 import { FormProductInterface, CategoryInterface, ProductInterface } from "../../../data/interface/ProductInterface";
 import { ProductService } from "../../../data/service/ProductService";
@@ -144,7 +144,7 @@ const MasterProduct = () => {
 
     const filterTable = (column: keyof ProductInterface, columnnName?: string) => {
         return <div>
-            <input style={{ fontSize: "12px", marginTop: "0.5dvh", width: "100%", padding: "0px 3px", borderRadius: "3px" }} type="text" value={tableDataFilter[column] ?? ""}
+            <input style={{ fontSize: "12px", marginTop: "0.5dvh", width: "100%", maxWidth: "300px",padding: "0px 3px", borderRadius: "3px", color: "var(--primary-500)" }} type="text" value={tableDataFilter[column] ?? ""}
                 placeholder={`${columnnName ?? column} ...`}
                 onChange={(event) => {
                     setTableDataFilter((prev) => {
@@ -162,8 +162,8 @@ const MasterProduct = () => {
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", gap: "3px", whiteSpace: "nowrap", cursor: "pointer" }} onClick={() => handleSorting(column)}>
                 <div style={{ fontSize: "12px" }}>{columnName ?? column}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0", alignItems: "center", justifyItems: "center" }}>
-                    <FaSortUp style={{ color: ((sortColumnChoosed == column && sortColumnType == "descending") ? "var(--amber-950)" : "var(--amber-100)"), margin: 0, padding: 0, height: '18px' }} />
-                    <FaSortDown style={{ color: ((sortColumnChoosed == column && sortColumnType == "ascending") ? "var(--amber-950)" : "var(--amber-100)"), margin: "-18px", padding: 0, height: '18px' }} />
+                    <FaSortUp style={{ color: ((sortColumnChoosed == column && sortColumnType == "descending") ? "var(--primary-950)" : "var(--primary-100)"), margin: 0, padding: 0, height: '18px' }} />
+                    <FaSortDown style={{ color: ((sortColumnChoosed == column && sortColumnType == "ascending") ? "var(--primary-950)" : "var(--primary-100)"), margin: "-18px", padding: 0, height: '18px' }} />
                 </div>
             </div>
         </>
@@ -216,10 +216,10 @@ const MasterProduct = () => {
                     </div>
                 </div>
                 <div className={css["button-container"]}>
-                    <button onClick={() => handlePopupAddNew()} className="amber-button">
+                    <button onClick={() => handlePopupAddNew()} className="primary-button">
                         Add New
                     </button>
-                    <button onClick={() => { generateData(); setSortColumnChoosed(null); setSortColumnType('ascending') }} className="amber-button">
+                    <button onClick={() => { generateData(); setSortColumnChoosed(null); setSortColumnType('ascending') }} className="primary-button">
                         Refresh
                     </button>
                 </div>
@@ -245,7 +245,7 @@ const MasterProduct = () => {
                                 <th>{headerTable("image_file", "Image File")}{filterTable("image_file", "Image File")}</th>
                                 <th>{headerTable("updated_at", "Updated At")}{filterTable("updated_at", "Updated At")}</th>
                                 <th>{headerTable("created_at", "Created At")}{filterTable("created_at", "Created At")}</th>
-                                <th style={{ backgroundColor: "var(--amber-900)", width: "100px", maxWidth: "100px", minWidth: "100px", position: "sticky", right: 0, zIndex: 1 }}>Action</th>
+                                <th style={{ backgroundColor: "var(--primary-900)", width: "100px", maxWidth: "100px", minWidth: "100px", position: "sticky", right: 0, zIndex: 1 }}>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -463,7 +463,7 @@ const MasterProduct = () => {
                             </select>
                             {selectedData == null ?
                                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "end", gap: "10px", marginTop: "10px" }}>
-                                    <button className={'amber-button'}
+                                    <button className={'primary-button'}
                                         onClick={() => { handleSaveAddNew() }}
                                     >
                                         <FaSave /> &nbsp; Save
@@ -476,7 +476,7 @@ const MasterProduct = () => {
                                     >
                                         <FaTrash /> &nbsp; Delete
                                     </button>
-                                    <button className={'amber-button'}
+                                    <button className={'primary-button'}
                                         onClick={() => { handleSaveEdit() }}
                                     >
                                         <FaSave /> &nbsp; Save

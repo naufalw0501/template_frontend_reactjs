@@ -7,10 +7,10 @@ nav {
 	justify-content: space-between;
 	width: 18%;
 	min-height: 100dvh;
-	background-color: var(--amber-600);
+	background-color: var(--primary-600);
 	padding: 0rem 1rem 0rem 1rem;
 	transition: transform 1s;
-	/* border-right: 2px solid var(--amber-50); */
+	/* border-right: 2px solid var(--primary-50); */
 	/* box-sizing: border-box; */
 	box-shadow: 5px 0px 5px rgba(0, 0, 0, 0.3);
 	z-index: 99;
@@ -32,18 +32,18 @@ nav {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: var(--amber-600);
+	background-color: var(--primary-600);
 	outline: none;
 	font-size: 1rem;
 	padding: 5px 10px;
 	cursor: pointer;
-	color: var(--amber-50);
+	color: var(--primary-50);
 	box-shadow: 5px 0px 5px rgba(0, 0.3, 0.3, 0.3);
 	transition: 0.5s ease;
 }
 
 .nav-btn:hover {
-	background-color: var(--amber-700);
+	background-color: var(--primary-700);
 }
 
 .logo {
@@ -65,7 +65,7 @@ nav {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	color: var(--amber-50);
+	color: var(--primary-50);
 	text-decoration: none;
 	padding: 7px 1rem;
 	font-size: 16px;
@@ -76,8 +76,8 @@ nav {
 }
 
 .nav-link:hover {
-	background-color: var(--amber-950);
-	color: var(--amber-50);
+	background-color: var(--primary-950);
+	color: var(--primary-50);
 	cursor: pointer;
 }
 
@@ -89,9 +89,9 @@ nav {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	color: var(--amber-50);
+	color: var(--primary-50);
 	text-decoration: none;
-	font-size: 14px;
+	font-size: 12px;
 	padding: 5px 1rem;
 	border-radius: 5px;
 	margin-bottom: 5px;
@@ -100,8 +100,8 @@ nav {
 }
 
 .nav-link-child:hover {
-	background-color: var(--amber-800);
-	color: var(--amber-50);
+	background-color: var(--primary-800);
+	color: var(--primary-50);
 	cursor: pointer;
 }
 
@@ -115,7 +115,7 @@ nav {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	color: var(--amber-50);
+	color: var(--primary-50);
 	text-decoration: none;
 	padding: 10px 1rem;
 	border-radius: 5px;
@@ -125,8 +125,8 @@ nav {
 }
 
 .nav-logout:hover {
-	background-color: var(--amber-950);
-	color: var(--amber-50);
+	background-color: var(--primary-950);
+	color: var(--primary-50);
 	cursor: pointer;
 }
 
@@ -158,14 +158,14 @@ nav {
 }
 
 .mobile-nav {
-	background-color: var(--amber-600);
+	background-color: var(--primary-600);
 	width: 100%;
 	height: 40px;
 	display: none;
 }
 
 .mobile-nav-btn {
-	color: var(--amber-50);
+	color: var(--primary-50);
 	background: transparent;
 	outline: none;
 	border: none;

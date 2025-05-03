@@ -12,7 +12,7 @@
     transform: translate(-50%, -50%);
     opacity: 1;
     transition: 0.5s;
-    box-shadow: 0 10px 12px rgba(0, 0, 0, 0.2); 
+    box-shadow: 0 10px 12px rgba(0, 0, 0, 0.2);
 }
 
 .modalmobile#hide {
@@ -34,12 +34,26 @@
     }
 }
 
+.header {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.content {
+    overflow-y: auto;
+    max-height: calc(90vh - 80px);
+}
+
 .modalmobile .closeButton {
     position: absolute;
     right: .5dvw;
     top: .5dvw;
     transition: 0.5s;
-    color: #E11D48; 
+    color: #E11D48;
 }
 
 .modalmobile .closeButton:hover {
@@ -47,7 +61,7 @@
     color: pink
 }
 
-@media only screen and (min-width: 769px) { 
+@media only screen and (min-width: 769px) {
     .modalmobile {
         padding: 1.5dvw 4dvw;
         max-height: 90%;
@@ -57,13 +71,14 @@
         border-radius: 15px;
         margin: 1dvh auto;
     }
-    .modalmobile .closeButton{ 
+
+    .modalmobile .closeButton {
         font-size: 25px;
     }
 }
 
-@media only screen and (max-width: 768px) and (min-width: 641px) {  
-    .modalmobile { 
+@media only screen and (max-width: 768px) and (min-width: 641px) {
+    .modalmobile {
         padding: 1.5dvw 4dvw;
         max-height: 90%;
         max-width: 90%;
@@ -72,13 +87,14 @@
         border-radius: 10px;
         margin: 1dvh auto;
     }
-    .modalmobile .closeButton{ 
+
+    .modalmobile .closeButton {
         font-size: 21px;
     }
 }
 
-@media only screen and (max-width: 640px) {  
-    .modalmobile { 
+@media only screen and (max-width: 640px) {
+    .modalmobile {
         padding: 1.5dvw 4dvw;
         border-radius: 5px;
         min-width: 95%;
@@ -86,7 +102,8 @@
         max-height: 90%;
         max-width: 85%;
     }
-    .modalmobile .closeButton{ 
+
+    .modalmobile .closeButton {
         font-size: 18px;
     }
 }

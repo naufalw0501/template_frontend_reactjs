@@ -12,19 +12,19 @@ class ProductService {
         const data: ProductInterface[] = []
         for (let i = 0; i < resp.data.length; i++) {
             data.push(({
-                id : resp.data[i].id,
-                product_name : resp.data[i].product_name,
-                description : resp.data[i].description,
-                category_name : resp.data[i].category_name,
-                lowest_price : resp.data[i].lowest_price,
-                highest_price : resp.data[i].highest_price,
-                size : resp.data[i].size,
-                notes : resp.data[i].notes,
-                link_shopee : resp.data[i].link_shopee,
-                link_tokopedia : resp.data[i].link_tokopedia,
-                image_file : resp.data[i].image_file,
-                updated_at : resp.data[i].updated_at,
-                created_at : resp.data[i].created_at,
+                id: resp.data[i].id,
+                product_name: resp.data[i].product_name,
+                description: resp.data[i].description,
+                category_name: resp.data[i].category_name,
+                lowest_price: resp.data[i].lowest_price,
+                highest_price: resp.data[i].highest_price,
+                size: resp.data[i].size,
+                notes: resp.data[i].notes,
+                link_shopee: resp.data[i].link_shopee,
+                link_tokopedia: resp.data[i].link_tokopedia,
+                image_file: resp.data[i].image_file,
+                updated_at: resp.data[i].updated_at,
+                created_at: resp.data[i].created_at,
             }))
         }
         return { ...resp, data };
@@ -46,29 +46,48 @@ class ProductService {
         return { ...resp, data };
     }
 
-    static async createProduct(data: FormProductInterface) {
-        //TODO Add Role
+    static async createProduct(data: FormProductInterface) { 
+        if (
+            data.product_name == null || data.product_name.trim() === '' ||
+            data.description == null || data.description.trim() === '' ||
+            data.id_category == null ||
+            data.lowest_price == null ||
+            data.highest_price == null ||
+            data.size == null || data.size.trim() === '' ||
+            data.notes == null || data.notes.trim() === '' ||
+            data.link_shopee == null || data.link_shopee.trim() === '' ||
+            data.link_tokopedia == null || data.link_tokopedia.trim() === '' ||
+            data.image_file == null
+        ) {
+            throw new Error('All Form must be filled !');
+        }
+
         const resp = await FetchUtils.fetchAuth(
             `${BASE_URL}/api/products/add`,
             {
                 method: 'POST',
                 body: JSON.stringify({
-                    product_name : data.product_name,
-                    description : data.description,
-                    id_category : data.id_category,
-                    lowest_price : data.lowest_price,
-                    highest_price : data.highest_price,
-                    size : data.size,
-                    notes : data.notes,
-                    link_shopee : data.link_shopee,
-                    link_tokopedia : data.link_tokopedia,
-                    image_file : data.image_file
+                    product_name: data.product_name,
+                    description: data.description,
+                    id_category: data.id_category,
+                    lowest_price: data.lowest_price,
+                    highest_price: data.highest_price,
+                    size: data.size,
+                    notes: data.notes,
+                    link_shopee: data.link_shopee,
+                    link_tokopedia: data.link_tokopedia,
+                    image_file: data.image_file
                 })
             }
-        )
-        if (resp.status != 201) { throw new Error(resp.message) }
+        );
+
+        if (resp.status != 201) {
+            throw new Error(resp.message);
+        }
+
         return resp;
     }
+
 
     static async updateProduct(data: ProductInterface, update: FormProductInterface) {
         const resp = await FetchUtils.fetchAuth(
@@ -76,17 +95,17 @@ class ProductService {
             {
                 method: 'PUT',
                 body: JSON.stringify({
-                    id : data.id,
-                    product_name : update.product_name,
-                    description : update.description,
-                    id_category : update.id_category,
-                    lowest_price : update.lowest_price,
-                    highest_price : update.highest_price,
-                    size : update.size,
-                    notes : update.notes,
-                    link_shopee : update.link_shopee,
-                    link_tokopedia : update.link_tokopedia,
-                    image_file : update.image_file
+                    id: data.id,
+                    product_name: update.product_name,
+                    description: update.description,
+                    id_category: update.id_category,
+                    lowest_price: update.lowest_price,
+                    highest_price: update.highest_price,
+                    size: update.size,
+                    notes: update.notes,
+                    link_shopee: update.link_shopee,
+                    link_tokopedia: update.link_tokopedia,
+                    image_file: update.image_file
                 })
             }
         )

@@ -22,7 +22,7 @@
   
   .container .icon {
     flex: 10%;
-    color: var(--green-param);
+    color: var(--green-600);
     font-size: 30px;
   }
   
@@ -35,7 +35,7 @@
   
   .container .containerText .title {
     font-size: 14px;
-    color: var(--green-param);
+    color: var(--green-600);
     font-weight: 700;
   }
   

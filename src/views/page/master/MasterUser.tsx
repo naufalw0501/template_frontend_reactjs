@@ -160,8 +160,8 @@ const MasterUser = () => {
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", gap: "3px", whiteSpace: "nowrap", cursor: "pointer" }} onClick={() => handleSorting(column)}>
                 <div style={{ fontSize: "12px" }}>{columnName ?? column}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0", alignItems: "center", justifyItems: "center" }}>
-                    <FaSortUp style={{ color: ((sortColumnChoosed == column && sortColumnType == "descending") ? "var(--amber-950)" : "var(--amber-100)"), margin: 0, padding: 0, height: '18px' }} />
-                    <FaSortDown style={{ color: ((sortColumnChoosed == column && sortColumnType == "ascending") ? "var(--amber-950)" : "var(--amber-100)"), margin: "-18px", padding: 0, height: '18px' }} />
+                    <FaSortUp style={{ color: ((sortColumnChoosed == column && sortColumnType == "descending") ? "var(--primary-950)" : "var(--primary-100)"), margin: 0, padding: 0, height: '18px' }} />
+                    <FaSortDown style={{ color: ((sortColumnChoosed == column && sortColumnType == "ascending") ? "var(--primary-950)" : "var(--primary-100)"), margin: "-18px", padding: 0, height: '18px' }} />
                 </div>
             </div>
         </>
@@ -214,10 +214,10 @@ const MasterUser = () => {
                     </div>
                 </div>
                 <div className={css["button-container"]}>
-                    <button onClick={() => handlePopupAddNew()} className="amber-button">
+                    <button onClick={() => handlePopupAddNew()} className="primary-button">
                         Add New
                     </button>
-                    <button onClick={() => { generateData(); setSortColumnChoosed(null); setSortColumnType('ascending') }} className="amber-button">
+                    <button onClick={() => { generateData(); setSortColumnChoosed(null); setSortColumnType('ascending') }} className="primary-button">
                         Refresh
                     </button>
                 </div>
@@ -343,7 +343,7 @@ const MasterUser = () => {
                             </select>
                             {selectedData == null ?
                                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "end", gap: "10px", marginTop: "10px" }}>
-                                    <button className={'amber-button'}
+                                    <button className={'primary-button'}
                                         onClick={() => { handleSaveAddNew() }}
                                     >
                                         <FaSave /> &nbsp; Save
@@ -356,7 +356,7 @@ const MasterUser = () => {
                                     >
                                         <FaTrash /> &nbsp; Delete
                                     </button>
-                                    <button className={'amber-button'}
+                                    <button className={'primary-button'}
                                         onClick={() => { handleSaveEdit() }}
                                     >
                                         <FaSave /> &nbsp; Save

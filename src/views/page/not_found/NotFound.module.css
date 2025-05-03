@@ -4,7 +4,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--amber-600); /* bg-amber-600 */
+  background-color: var(--primary-600); /* bg-primary-600 */
   position: relative;
   overflow: hidden;
   flex-direction: column;

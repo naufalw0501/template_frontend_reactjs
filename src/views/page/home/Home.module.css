@@ -6,7 +6,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: var(--amber-600); 
+  background-color: var(--primary-600); 
 
   /* Login Form */
   .loginForm {
@@ -14,7 +14,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: var(--amber-100); 
+    background-color: var(--primary-100); 
     border-radius: 8px;
     width: 33%;
     z-index: 1;
@@ -29,7 +29,7 @@
       margin: 16px 0;
       font-size: 1.25rem; 
       font-weight: 600; 
-      color: var(--amber-950); 
+      color: var(--primary-950); 
     }
 
     .loginFields {
@@ -54,13 +54,13 @@
     }
 
     .iconStyle {
-      color: var(--amber-900); 
+      color: var(--primary-900); 
       font-size: 1.5rem; 
       margin: 0 8px;
     }
 
     .loginButton {
-      background-color: var(--amber-800); 
+      background-color: var(--primary-800); 
       width: 100%;
       margin-bottom: 32px;
       padding: 12px;
@@ -70,7 +70,7 @@
     }
 
     .loginButton:hover {
-      background-color: var(--amber-900); 
+      background-color: var(--primary-900); 
     }
   }
 

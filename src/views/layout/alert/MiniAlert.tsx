@@ -32,7 +32,7 @@ export default function MiniAlert(props: {
                         ? <div className={css.icon} style={{ color: "orange" }}><IoMdAlert /></div>
                         : <div className={css.icon} style={{ color: "var(--rose-500)" }}><IoMdCloseCircle /></div>}
                 <div className={css.containerText}>
-                    {title && <div className={css.title} style={{ color: (level === 1 ? "var(--green-param)" : level === 2 ? "orange" : "var(--rose-500)") }}>{title}</div>}
+                    {title && <div className={css.title} style={{ color: (level === 1 ? "var(--green-600)" : level === 2 ? "orange" : "var(--rose-500)") }}>{title}</div>}
                     <div className={css.description}>{messages ?? ""}</div>
                 </div>
                 <div className={css.close} onClick={() => { setShowMiniAlert(false) }}>

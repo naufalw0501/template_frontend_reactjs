@@ -17,43 +17,54 @@ class FetchUtils {
         return data;
     }
 
-    static async fetchFile(address: string | URL, option?: RequestInit): Promise<Response> {
-        const token = Cookies.get('access_token');
+    static async fetchAuthWithUploadFile(address: string | URL, option?: RequestInit): Promise<{ message: string, status: number, data: any }> {
+        const token = Cookies.get('token');
 
         if (option == null) {
             option = { headers: { Authorization: `Bearer ${token}` } };
         } else {
             option.headers = { ...option.headers, Authorization: `Bearer ${token}` };
         }
-        option.headers = {...option.headers, "Content-Type": "application/json"}
 
         const result = await fetch(address, option);
-        return result;
+        let data = await result.json();
+        data.status = result.status;
+        return data;
     }
 
-    // thank stack overflow
-    static convertModelToFormData(val: any, formData: FormData = new FormData(), namespace: string = '') {
-        if ((typeof val !== 'undefined') && val !== null) {
-            if (val instanceof Date) {
-                formData.append(namespace, val.toISOString());
-            } else if (val instanceof Array) {
-                for (let i = 0; i < val.length; i++) {
-                    this.convertModelToFormData(val[i], formData, namespace + '[' + i + ']');
-                }
-            } else if (typeof val === 'object' && !(val instanceof File)) {
-                for (let propertyName in val) {
-                    if (val.hasOwnProperty(propertyName)) {
-                        this.convertModelToFormData(val[propertyName], formData, namespace ? `${namespace}[${propertyName}]` : propertyName);
-                    }
-                }
-            } else if (val instanceof File) {
-                formData.append(namespace, val);
-            } else {
-                formData.append(namespace, val.toString());
+    static async fetchFile(address: string | URL, option?: RequestInit): Promise<{ message: string, status: number } | File> {
+        const token = Cookies.get('access_token');
+    
+        if (!option) {
+            option = {};
+        }
+    
+        option.headers = {
+            ...(option.headers || {}),
+            Authorization: `Bearer ${token}`,
+        };
+    
+        const response = await fetch(address, option);
+    
+        if (!response.ok) { 
+            try {
+                const errorJson = await response.json();
+                return { message: errorJson.message || 'Error', status: response.status };
+            } catch {
+                return { message: 'Unknown Error', status: response.status };
             }
         }
-        return formData;
+     
+        const blob = await response.blob();
+        const contentDisposition = response.headers.get("Content-Disposition");
+        const fileName = contentDisposition
+            ? contentDisposition.split("filename=")[1]?.replace(/["']/g, '')
+            : 'downloaded_file';
+    
+        const file = new File([blob], fileName, { type: blob.type });
+        return file;
     }
+    
 }
 
 export default FetchUtils

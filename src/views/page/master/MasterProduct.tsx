@@ -12,6 +12,7 @@ import { ProductService } from "../../../data/service/ProductService";
 import { RiRuler2Fill } from "react-icons/ri";
 import { IoMdPricetag } from "react-icons/io";
 import { SiShopee } from "react-icons/si";
+import { FileService } from "../../../data/service/FileService";
 
 const MasterProduct = () => {
     //-----------------------STATE VIEWS-----------------------//
@@ -35,6 +36,7 @@ const MasterProduct = () => {
     const [showPopup, setShowPopup] = useState<boolean>(false)
     const [formData, setFormData] = useState<FormProductInterface>({})
     const [selectedData, setSelectedData] = useState<ProductInterface | null>(null)
+    const [urlImageProduct, setUrlImageProduct] = useState<string | null>(null)
     //-----------------------STATE VIEWS-----------------------//
 
     //------------------------FUNCTIONS------------------------// 
@@ -45,10 +47,23 @@ const MasterProduct = () => {
         setFormData({})
     }
 
-    const handlePopupEdit = (row_data: ProductInterface) => {
-        setShowPopup(true)
+    const handlePopupEdit = async (row_data: ProductInterface) => {
         setSelectedData(row_data)
         setFormData(row_data)
+        setShowPopup(true)
+        setContextLoading(true)
+        try {
+            const file_resp = await FileService.getFile('products', row_data.image_file);
+            if (file_resp instanceof File) {
+                const url = URL.createObjectURL(file_resp);
+                setUrlImageProduct(url)
+            }
+        } catch (error: any) {
+            contextShowMiniAlertFunc(new MiniAlertEntity({ messages: error.toString() }))
+            setUrlImageProduct(null)
+        } finally {
+            setContextLoading(false)
+        }
     }
 
     const handleSaveAddNew = async () => {
@@ -144,7 +159,7 @@ const MasterProduct = () => {
 
     const filterTable = (column: keyof ProductInterface, columnnName?: string) => {
         return <div>
-            <input style={{ fontSize: "12px", marginTop: "0.5dvh", width: "100%", maxWidth: "300px",padding: "0px 3px", borderRadius: "3px", color: "var(--primary-500)" }} type="text" value={tableDataFilter[column] ?? ""}
+            <input style={{ fontSize: "12px", marginTop: "0.5dvh", width: "100%", maxWidth: "300px", padding: "0px 3px", borderRadius: "3px", color: "var(--primary-500)" }} type="text" value={tableDataFilter[column] ?? ""}
                 placeholder={`${columnnName ?? column} ...`}
                 onChange={(event) => {
                     setTableDataFilter((prev) => {
@@ -324,7 +339,28 @@ const MasterProduct = () => {
                 popupTitle={selectedData == null ? `Add New Product` : `Edit Product ${selectedData.product_name}`}
                 popupContent={
                     <>
-                        <div className={css['popup-container']}>
+                        <div className={css['popup-container']} >
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+                                {urlImageProduct ? (
+                                    <img src={urlImageProduct} alt="Product" style={{ maxWidth: '50%', maxHeight: '300px' }} />
+                                ) : (
+                                    <p style={{fontSize: "12px"}}>No image available</p>
+                                )}
+                                <input type="file" style={{fontSize: "12px", margin: "10px 0px"}}
+                                    onChange={(event) => {
+                                        const file = event.target.files?.[0];
+                                        if (file == null) return
+                                        setFormData((prevState: (FormProductInterface | null)) => {
+                                            return ({
+                                                ...prevState,
+                                                image_file_to_upload: file
+                                            });
+                                        })
+                                        const url = URL.createObjectURL(file);
+                                        setUrlImageProduct(url)
+                                    }}
+                                />
+                            </div>
                             <label className={css['popup-label']} htmlFor="product_name"><MdCardMembership />Product Name</label>
                             <div className={css['popup-input-container']}>
                                 <input className={css['popup-input']} id="product_name" type="text" placeholder="Fill Product Name Here..."
@@ -355,7 +391,7 @@ const MasterProduct = () => {
                             </div>
                             <label className={css['popup-label']} htmlFor="lowest_price"><IoMdPricetag />Lowest Price</label>
                             <div className={css['popup-input-container']}>
-                                <input className={css['popup-input']} id="lowest_price" type="text" placeholder="Fill Lowest Price Here..."
+                                <input className={css['popup-input']} id="lowest_price" type="number" placeholder="Fill Lowest Price Here..."
                                     value={formData?.lowest_price ?? ""}
                                     onChange={(event) => {
                                         setFormData((prevState: (FormProductInterface | null)) => {
@@ -369,7 +405,7 @@ const MasterProduct = () => {
                             </div>
                             <label className={css['popup-label']} htmlFor="highest_price"><IoMdPricetag />Highest Price</label>
                             <div className={css['popup-input-container']}>
-                                <input className={css['popup-input']} id="highest_price" type="text" placeholder="Fill Highest Price Here..."
+                                <input className={css['popup-input']} id="highest_price" type="number" placeholder="Fill Highest Price Here..."
                                     value={formData?.highest_price ?? ""}
                                     onChange={(event) => {
                                         setFormData((prevState: (FormProductInterface | null)) => {
@@ -436,7 +472,7 @@ const MasterProduct = () => {
                                         });
                                     }}
                                 />
-                            </div>  
+                            </div>
                             <label className={css['popup-label']} htmlFor="category_name"><MdWork />Category Name</label>
                             <select name="category_name" id="category_name" className={css['popup-input-container']}
                                 value={formData?.category_name || ""}

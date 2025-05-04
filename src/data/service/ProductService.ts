@@ -57,27 +57,28 @@ class ProductService {
             data.notes == null || data.notes.trim() === '' ||
             data.link_shopee == null || data.link_shopee.trim() === '' ||
             data.link_tokopedia == null || data.link_tokopedia.trim() === '' ||
-            data.image_file == null
+            data.image_file_to_upload == null
         ) {
             throw new Error('All Form must be filled !');
         }
 
-        const resp = await FetchUtils.fetchAuth(
+        const formData = new FormData();
+        formData.append('product_name', data.product_name);
+        formData.append('description', data.description);
+        formData.append('id_category', String(data.id_category));
+        formData.append('lowest_price', String(data.lowest_price));
+        formData.append('highest_price', String(data.highest_price));
+        formData.append('size', data.size);
+        formData.append('notes', data.notes);
+        formData.append('link_shopee', data.link_shopee);
+        formData.append('link_tokopedia', data.link_tokopedia);
+        formData.append('image', data.image_file_to_upload);  
+
+        const resp = await FetchUtils.fetchAuthWithUploadFile(
             `${BASE_URL}/api/products/add`,
             {
                 method: 'POST',
-                body: JSON.stringify({
-                    product_name: data.product_name,
-                    description: data.description,
-                    id_category: data.id_category,
-                    lowest_price: data.lowest_price,
-                    highest_price: data.highest_price,
-                    size: data.size,
-                    notes: data.notes,
-                    link_shopee: data.link_shopee,
-                    link_tokopedia: data.link_tokopedia,
-                    image_file: data.image_file
-                })
+                body: formData
             }
         );
 

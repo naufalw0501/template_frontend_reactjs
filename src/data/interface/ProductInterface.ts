@@ -26,6 +26,7 @@ interface FormProductInterface {
     link_shopee? : string
     link_tokopedia? : string  
     image_file? : string  
+    image_file_to_upload? : File  
 }
 
 interface CategoryInterface {
